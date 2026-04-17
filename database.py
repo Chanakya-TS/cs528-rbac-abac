@@ -10,6 +10,26 @@ def get_db():
     return conn
 
 
+def reset_db():
+    """Drop all tables for a clean restart (call before init_db if needed)."""
+    conn = get_db()
+    c = conn.cursor()
+    c.executescript("""
+        PRAGMA foreign_keys = OFF;
+        DROP TABLE IF EXISTS access_logs;
+        DROP TABLE IF EXISTS resource_assignments;
+        DROP TABLE IF EXISTS role_permissions;
+        DROP TABLE IF EXISTS user_roles;
+        DROP TABLE IF EXISTS resources;
+        DROP TABLE IF EXISTS users;
+        DROP TABLE IF EXISTS role_exclusions;
+        DROP TABLE IF EXISTS roles;
+        PRAGMA foreign_keys = ON;
+    """)
+    conn.commit()
+    conn.close()
+
+
 def init_db():
     conn = get_db()
     c = conn.cursor()
@@ -25,10 +45,23 @@ def init_db():
         is_auditor INTEGER NOT NULL DEFAULT 0
     );
 
+    -- RBAC1: parent_role implements role hierarchy.
+    -- A senior role inherits all permissions of its parent (junior) role.
+    -- Chain: administrator -> manager -> employee
     CREATE TABLE IF NOT EXISTS roles (
         id INTEGER PRIMARY KEY,
         name TEXT UNIQUE NOT NULL,
-        description TEXT
+        description TEXT,
+        parent_role TEXT REFERENCES roles(name),
+        max_users INTEGER DEFAULT NULL
+    );
+
+    -- RBAC2: Statically mutually-exclusive role pairs (Separation of Duties).
+    CREATE TABLE IF NOT EXISTS role_exclusions (
+        role1 TEXT NOT NULL,
+        role2 TEXT NOT NULL,
+        reason TEXT,
+        PRIMARY KEY (role1, role2)
     );
 
     CREATE TABLE IF NOT EXISTS user_roles (
@@ -78,68 +111,68 @@ def init_db():
     );
     """)
 
-    # ── Roles ──────────────────────────────────────────────────────────────
+    # ── RBAC1: Roles with hierarchy ──────────────────────────────────────────
+    # parent_role = the junior role this role inherits permissions FROM.
+    # administrator inherits from manager, manager inherits from employee.
+    # contractor and viewer are isolated (no hierarchy).
     roles = [
-        ("administrator", "Full control over users, permissions, and services"),
-        ("manager",       "Manage team resources, approve access, and share documents"),
-        ("employee",      "Create and edit documents, send emails, and collaborate"),
-        ("contractor",    "Limited access to assigned documents and tools"),
-        ("viewer",        "Read-only access to shared resources"),
+        ("employee",      "Create and edit documents, send emails, and collaborate",    None,         None),
+        ("viewer",        "Read-only access to shared resources",                       None,         None),
+        ("contractor",    "Limited access to assigned documents and tools",             None,         20),
+        ("manager",       "Manage team resources, approve access, and share documents", "employee",   None),
+        ("administrator", "Full control over users, permissions, and services",         "manager",    5),
     ]
-    c.executemany("INSERT OR IGNORE INTO roles (name, description) VALUES (?, ?)", roles)
+    c.executemany(
+        "INSERT OR IGNORE INTO roles (name, description, parent_role, max_users) VALUES (?, ?, ?, ?)",
+        roles,
+    )
 
-    # ── RBAC permission matrix ─────────────────────────────────────────────
+    # ── RBAC2: Static Separation-of-Duties exclusions ────────────────────────
+    exclusions = [
+        ("administrator", "contractor", "Admins cannot be contractors — privilege escalation risk"),
+        ("manager",       "contractor", "Managers cannot hold contractor role — conflict of interest"),
+        ("employee",      "contractor", "Contractor and employee roles are mutually exclusive"),
+        ("viewer",        "contractor", "Assign contractor or viewer, not both"),
+    ]
+    c.executemany(
+        "INSERT OR IGNORE INTO role_exclusions (role1, role2, reason) VALUES (?, ?, ?)",
+        exclusions,
+    )
+
+    # ── RBAC permission matrix ───────────────────────────────────────────────
+    # With RBAC1, only define what each role ADDS beyond its parent.
+    # administrator's full set = its own + manager's + employee's (resolved in rbac.py).
     permissions = [
-        # administrator — full access
-        ("administrator", "docs",     "read"),
-        ("administrator", "docs",     "write"),
-        ("administrator", "docs",     "delete"),
-        ("administrator", "docs",     "share"),
-        ("administrator", "gmail",    "read"),
-        ("administrator", "gmail",    "write"),
-        ("administrator", "gmail",    "delete"),
-        ("administrator", "gmail",    "send"),
-        ("administrator", "drive",    "read"),
-        ("administrator", "drive",    "write"),
-        ("administrator", "drive",    "delete"),
-        ("administrator", "drive",    "share"),
-        ("administrator", "calendar", "read"),
-        ("administrator", "calendar", "write"),
-        ("administrator", "calendar", "delete"),
-        ("administrator", "calendar", "send"),
-        ("administrator", "system",   "admin"),
-        # manager
-        ("manager", "docs",     "read"),
-        ("manager", "docs",     "write"),
-        ("manager", "docs",     "delete"),
-        ("manager", "docs",     "share"),
-        ("manager", "gmail",    "read"),
-        ("manager", "gmail",    "write"),
-        ("manager", "gmail",    "send"),
-        ("manager", "drive",    "read"),
-        ("manager", "drive",    "write"),
-        ("manager", "drive",    "delete"),
-        ("manager", "drive",    "share"),
-        ("manager", "calendar", "read"),
-        ("manager", "calendar", "write"),
-        ("manager", "calendar", "send"),
-        # employee
+        # employee — base permissions
         ("employee", "docs",     "read"),
         ("employee", "docs",     "write"),
+        ("employee", "docs",     "comment"),
         ("employee", "gmail",    "read"),
         ("employee", "gmail",    "write"),
         ("employee", "gmail",    "send"),
         ("employee", "drive",    "read"),
         ("employee", "drive",    "write"),
+        ("employee", "drive",    "comment"),
         ("employee", "calendar", "read"),
         ("employee", "calendar", "write"),
         ("employee", "calendar", "send"),
-        # contractor — read only
+        # manager — adds over employee
+        ("manager", "docs",  "delete"),
+        ("manager", "docs",  "share"),
+        ("manager", "drive", "delete"),
+        ("manager", "drive", "share"),
+        # administrator — adds over manager
+        ("administrator", "gmail",    "delete"),
+        ("administrator", "calendar", "delete"),
+        ("administrator", "system",   "admin"),
+        # contractor — isolated, read + comment only on assigned resources
         ("contractor", "docs",     "read"),
+        ("contractor", "docs",     "comment"),
         ("contractor", "drive",    "read"),
         ("contractor", "calendar", "read"),
-        # viewer — read only
+        # viewer — isolated, read only + can comment on docs
         ("viewer", "docs",     "read"),
+        ("viewer", "docs",     "comment"),
         ("viewer", "drive",    "read"),
         ("viewer", "gmail",    "read"),
         ("viewer", "calendar", "read"),
@@ -149,8 +182,7 @@ def init_db():
         permissions,
     )
 
-    # ── Sample users ───────────────────────────────────────────────────────
-    # (id, username, email, employment_type, department, clearance_level, is_auditor)
+    # ── Sample users ──────────────────────────────────────────────────────────
     users = [
         (1, "alice_admin",     "alice@org.com",  "full-time",  "IT",          "high",   0),
         (2, "bob_manager",     "bob@org.com",    "full-time",  "Engineering", "high",   0),
@@ -166,7 +198,7 @@ def init_db():
         users,
     )
 
-    # ── User-role assignments ──────────────────────────────────────────────
+    # ── User-role assignments ─────────────────────────────────────────────────
     user_role_map = [
         (1, "administrator"),
         (2, "manager"),
@@ -183,8 +215,7 @@ def init_db():
                 (uid, row["id"]),
             )
 
-    # ── Sample resources ───────────────────────────────────────────────────
-    # (id, name, resource_type, owner_id, sensitivity_level, department)
+    # ── Sample resources ──────────────────────────────────────────────────────
     resources = [
         (1, "Q1 Engineering Report",     "docs",     3,    "internal",     "Engineering"),
         (2, "Confidential Strategy Doc", "docs",     2,    "confidential", "Engineering"),
@@ -201,7 +232,7 @@ def init_db():
         resources,
     )
 
-    # Explicitly assign contractor (dave, id=4) to the Q1 report (id=1)
+    # Assign contractor (dave=4) to Q1 Engineering Report (id=1)
     c.execute(
         "INSERT OR IGNORE INTO resource_assignments (user_id, resource_id) VALUES (?, ?)",
         (4, 1),
@@ -211,7 +242,7 @@ def init_db():
     conn.close()
 
 
-# ── Helper getters ─────────────────────────────────────────────────────────
+# ── Helper getters ─────────────────────────────────────────────────────────────
 
 def get_user(user_id, conn):
     return conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()

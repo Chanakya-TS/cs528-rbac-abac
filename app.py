@@ -4,39 +4,31 @@ Hybrid Access Control System — Flask Application
 Endpoints
 ─────────
 PEP (Policy Enforcement Point)
-  POST /access                 Evaluate an access request
+  POST /access                      Evaluate an access request
 
 PAP (Policy Administration Point) — admin-only management
-  GET  /admin/users            List all users
-  POST /admin/users            Create a new user
-  GET  /admin/users/<id>       Get user details + roles
-  POST /admin/users/<id>/role  Assign a role to a user
-  GET  /admin/roles            List roles and their permissions
-  POST /admin/permissions      Add a permission to a role
-  GET  /admin/resources        List resources
-  POST /admin/resources        Create a resource
-  POST /admin/resources/<id>/assign   Assign a resource to a user
-  GET  /admin/logs             View access logs
+  GET  /admin/users                 List all users          [requires admin_id]
+  POST /admin/users                 Create a new user
+  GET  /admin/users/<id>            Get user details + roles
+  POST /admin/users/<id>/role       Assign a role to a user (RBAC1 + RBAC2 checked)
+  GET  /admin/roles                 List roles, hierarchy, and permissions
+  POST /admin/permissions           Add a permission to a role
+  GET  /admin/resources             List resources
+  POST /admin/resources             Create a resource
+  POST /admin/resources/<id>/assign Assign a resource to a user
+  GET  /admin/logs                  View access logs        [requires admin_id]
+  GET  /admin/constraints           List RBAC2 exclusion and cardinality constraints
 
 Utility
-  GET  /health                 Health check
+  GET  /health                      Health check
 """
 
 from flask import Flask, jsonify, request, abort, render_template
-from database import get_db, init_db, get_user, get_resource
+from database import get_db, init_db, reset_db, get_user, get_resource
 from pdp import evaluate
+from rbac import check_role_exclusions, check_role_cardinality, get_inherited_roles
 
 app = Flask(__name__)
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Bootstrap
-# ─────────────────────────────────────────────────────────────────────────────
-
-@app.before_request
-def _ensure_db():
-    """Initialise DB on first request (idempotent)."""
-    pass  # already called at startup
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -49,6 +41,8 @@ def _row_to_dict(row):
 
 def _require_admin(conn, user_id):
     """Abort 403 if user_id is not an administrator."""
+    if not user_id:
+        abort(403, description="admin_id is required for this operation")
     roles = conn.execute(
         """
         SELECT r.name FROM roles r
@@ -77,7 +71,7 @@ def access():
         "user_id":       <int>,
         "resource_id":   <int>,          optional
         "resource_type": <str>,          required if no resource_id
-        "action":        <str>,          read|write|delete|share|send|admin
+        "action":        <str>,          read|write|comment|delete|share|send|admin
         "context": {                     optional
             "hour":           <int>,
             "device_type":    <str>,
@@ -87,11 +81,11 @@ def access():
     """
     data = request.get_json(force=True, silent=True) or {}
 
-    user_id = data.get("user_id")
-    resource_id = data.get("resource_id")
+    user_id       = data.get("user_id")
+    resource_id   = data.get("resource_id")
     resource_type = data.get("resource_type")
-    action = data.get("action")
-    context = data.get("context", {})
+    action        = data.get("action")
+    context       = data.get("context", {})
 
     if user_id is None or action is None:
         return jsonify({"error": "user_id and action are required"}), 400
@@ -115,11 +109,10 @@ def access():
 
 @app.route("/admin/users", methods=["GET"])
 def list_users():
-    """List all users. Requires administrator."""
+    """List all users. Requires administrator (admin_id query param)."""
     admin_id = request.args.get("admin_id", type=int)
     conn = get_db()
-    if admin_id:
-        _require_admin(conn, admin_id)
+    _require_admin(conn, admin_id)
     rows = conn.execute("SELECT * FROM users").fetchall()
     conn.close()
     return jsonify([_row_to_dict(r) for r in rows])
@@ -144,7 +137,7 @@ def create_user():
     """
     data = request.get_json(force=True, silent=True) or {}
     conn = get_db()
-    _require_admin(conn, data.get("admin_id", 0))
+    _require_admin(conn, data.get("admin_id"))
 
     required = ("username", "email", "employment_type", "department", "clearance_level")
     for field in required:
@@ -187,12 +180,21 @@ def get_user_detail(user_id):
 
     roles = conn.execute(
         """
-        SELECT r.name, r.description FROM roles r
+        SELECT r.name, r.description, r.parent_role FROM roles r
         JOIN user_roles ur ON r.id = ur.role_id
         WHERE ur.user_id = ?
         """,
         (user_id,),
     ).fetchall()
+
+    # Include full inherited role chain for each assigned role
+    roles_with_inheritance = []
+    for r in roles:
+        inherited = get_inherited_roles(r["name"], conn)
+        roles_with_inheritance.append({
+            **_row_to_dict(r),
+            "inherits": inherited[1:],  # exclude self
+        })
 
     assignments = conn.execute(
         """
@@ -206,7 +208,7 @@ def get_user_detail(user_id):
     conn.close()
     return jsonify({
         **_row_to_dict(user),
-        "roles": [_row_to_dict(r) for r in roles],
+        "roles": roles_with_inheritance,
         "assigned_resources": [_row_to_dict(a) for a in assignments],
     })
 
@@ -214,13 +216,14 @@ def get_user_detail(user_id):
 @app.route("/admin/users/<int:user_id>/role", methods=["POST"])
 def assign_role(user_id):
     """
-    Assign a role to a user.
+    Assign a role to a user. Enforces RBAC2 constraints (SoD exclusions and
+    cardinality) before committing the assignment.
 
     Body (JSON): { "admin_id": <int>, "role": <str> }
     """
     data = request.get_json(force=True, silent=True) or {}
     conn = get_db()
-    _require_admin(conn, data.get("admin_id", 0))
+    _require_admin(conn, data.get("admin_id"))
 
     role_name = data.get("role", "").strip()
     if not role_name:
@@ -236,6 +239,18 @@ def assign_role(user_id):
     if not user:
         conn.close()
         return jsonify({"error": "User not found"}), 404
+
+    # ── RBAC2: Check exclusion constraints ───────────────────────────────────
+    allowed, excl_reason = check_role_exclusions(user_id, role_name, conn)
+    if not allowed:
+        conn.close()
+        return jsonify({"error": excl_reason}), 409
+
+    # ── RBAC2: Check cardinality constraints ─────────────────────────────────
+    allowed, card_reason = check_role_cardinality(role_name, conn)
+    if not allowed:
+        conn.close()
+        return jsonify({"error": card_reason}), 409
 
     try:
         conn.execute(
@@ -256,18 +271,32 @@ def assign_role(user_id):
 
 @app.route("/admin/roles", methods=["GET"])
 def list_roles():
-    """List all roles with their permissions."""
+    """List all roles with hierarchy info and their permissions."""
     conn = get_db()
     roles = conn.execute("SELECT * FROM roles").fetchall()
     result = []
     for role in roles:
+        # Own permissions
         perms = conn.execute(
             "SELECT resource_type, action FROM role_permissions WHERE role_name = ?",
             (role["name"],),
         ).fetchall()
+
+        # Inherited permissions (from parent chain)
+        inherited_chain = get_inherited_roles(role["name"], conn)[1:]  # skip self
+        inherited_perms = []
+        for ancestor in inherited_chain:
+            ap = conn.execute(
+                "SELECT resource_type, action FROM role_permissions WHERE role_name = ?",
+                (ancestor,),
+            ).fetchall()
+            inherited_perms.extend([{**_row_to_dict(p), "from_role": ancestor} for p in ap])
+
         result.append({
             **_row_to_dict(role),
-            "permissions": [_row_to_dict(p) for p in perms],
+            "permissions":          [_row_to_dict(p) for p in perms],
+            "inherited_permissions": inherited_perms,
+            "hierarchy_chain":      get_inherited_roles(role["name"], conn),
         })
     conn.close()
     return jsonify(result)
@@ -288,12 +317,17 @@ def add_permission():
     """
     data = request.get_json(force=True, silent=True) or {}
     conn = get_db()
-    _require_admin(conn, data.get("admin_id", 0))
+    _require_admin(conn, data.get("admin_id"))
 
     for field in ("role", "resource_type", "action"):
         if not data.get(field):
             conn.close()
             return jsonify({"error": f"'{field}' is required"}), 400
+
+    role = conn.execute("SELECT id FROM roles WHERE name = ?", (data["role"],)).fetchone()
+    if not role:
+        conn.close()
+        return jsonify({"error": f"Role '{data['role']}' does not exist"}), 404
 
     try:
         conn.execute(
@@ -302,7 +336,7 @@ def add_permission():
         )
         conn.commit()
         conn.close()
-        return jsonify({"message": "Permission added"}), 201
+        return jsonify({"message": f"Permission '{data['action']}' on '{data['resource_type']}' added to role '{data['role']}'" }), 201
     except Exception as e:
         conn.close()
         return jsonify({"error": str(e)}), 400
@@ -338,7 +372,7 @@ def create_resource():
     """
     data = request.get_json(force=True, silent=True) or {}
     conn = get_db()
-    _require_admin(conn, data.get("admin_id", 0))
+    _require_admin(conn, data.get("admin_id"))
 
     for field in ("name", "resource_type", "sensitivity_level"):
         if not data.get(field):
@@ -377,7 +411,7 @@ def assign_resource(resource_id):
     """
     data = request.get_json(force=True, silent=True) or {}
     conn = get_db()
-    _require_admin(conn, data.get("admin_id", 0))
+    _require_admin(conn, data.get("admin_id"))
 
     target_user = data.get("user_id")
     if not target_user:
@@ -398,21 +432,24 @@ def assign_resource(resource_id):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# PAP — Access Logs
+# PAP — Access Logs (requires admin auth)
 # ─────────────────────────────────────────────────────────────────────────────
 
 @app.route("/admin/logs", methods=["GET"])
 def access_logs():
     """
-    View access logs.
+    View access logs. Requires administrator (admin_id query param).
     Query params: limit (default 50), user_id, decision (permit|deny)
     """
-    limit = request.args.get("limit", 50, type=int)
-    user_filter = request.args.get("user_id", type=int)
+    admin_id        = request.args.get("admin_id", type=int)
+    conn            = get_db()
+    _require_admin(conn, admin_id)
+
+    limit           = request.args.get("limit", 50, type=int)
+    user_filter     = request.args.get("user_id", type=int)
     decision_filter = request.args.get("decision")
 
-    conn = get_db()
-    query = "SELECT * FROM access_logs WHERE 1=1"
+    query  = "SELECT * FROM access_logs WHERE 1=1"
     params = []
 
     if user_filter:
@@ -428,6 +465,44 @@ def access_logs():
     rows = conn.execute(query, params).fetchall()
     conn.close()
     return jsonify([_row_to_dict(r) for r in rows])
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PAP — RBAC2 Constraints
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route("/admin/constraints", methods=["GET"])
+def list_constraints():
+    """List all RBAC2 constraints: exclusions and cardinality limits."""
+    conn = get_db()
+
+    exclusions = conn.execute("SELECT * FROM role_exclusions").fetchall()
+    cardinality = conn.execute(
+        "SELECT name, max_users, description FROM roles WHERE max_users IS NOT NULL"
+    ).fetchall()
+
+    # Current counts per role
+    counts = conn.execute(
+        """
+        SELECT r.name, COUNT(ur.user_id) AS current_count
+        FROM roles r
+        LEFT JOIN user_roles ur ON r.id = ur.role_id
+        GROUP BY r.id
+        """
+    ).fetchall()
+    count_map = {row["name"]: row["current_count"] for row in counts}
+
+    conn.close()
+    return jsonify({
+        "exclusions": [_row_to_dict(e) for e in exclusions],
+        "cardinality": [
+            {
+                **_row_to_dict(r),
+                "current_count": count_map.get(r["name"], 0),
+            }
+            for r in cardinality
+        ],
+    })
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -459,6 +534,7 @@ def not_found(e):
 # ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    reset_db()
     init_db()
     print("Database initialised.")
     app.run(debug=True, port=5000)

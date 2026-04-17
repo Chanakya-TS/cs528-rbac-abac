@@ -23,14 +23,7 @@
       --font:      'Segoe UI', system-ui, sans-serif;
     }
 
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
     /* ── Header ── */
     header {
@@ -45,394 +38,192 @@
       top: 0;
       z-index: 100;
     }
-    header .logo {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: .5px;
-    }
-    header .subtitle {
-      font-size: .8rem;
-      color: var(--muted);
-      border-left: 1px solid var(--border);
-      padding-left: 1rem;
-    }
-    header .badge {
-      margin-left: auto;
-      font-size: .72rem;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 3px 12px;
-      color: var(--muted);
-    }
+    header .logo   { font-size: 1.1rem; font-weight: 700; color: var(--accent); letter-spacing: .5px; }
+    header .subtitle { font-size: .8rem; color: var(--muted); border-left: 1px solid var(--border); padding-left: 1rem; }
+    header .badge  { font-size: .72rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; color: var(--muted); }
+    .admin-session { margin-left: auto; display: flex; align-items: center; gap: .6rem; font-size: .82rem; color: var(--muted); }
+    .admin-session select { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .3rem .6rem; font-size: .82rem; font-family: var(--font); outline: none; }
+    .admin-session select:focus { border-color: var(--accent); }
+    #session-badge { font-size: .7rem; padding: 2px 8px; border-radius: 20px; background: rgba(79,110,247,.2); color: #7e9aff; }
 
     /* ── Layout ── */
     .layout { display: flex; flex: 1; }
 
     /* ── Sidebar ── */
-    nav.sidebar {
-      width: 200px;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 1.5rem 0;
-      flex-shrink: 0;
-    }
-    .nav-section {
-      padding: .4rem 1rem .2rem;
-      font-size: .68rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--muted);
-    }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-      padding: .55rem 1.2rem;
-      cursor: pointer;
-      font-size: .88rem;
-      color: var(--muted);
-      border-left: 3px solid transparent;
-      transition: all .15s;
-      user-select: none;
-    }
+    nav.sidebar { width: 210px; background: var(--surface); border-right: 1px solid var(--border); padding: 1.5rem 0; flex-shrink: 0; }
+    .nav-section { padding: .4rem 1rem .2rem; font-size: .68rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+    .nav-item { display: flex; align-items: center; gap: .6rem; padding: .55rem 1.2rem; cursor: pointer; font-size: .88rem; color: var(--muted); border-left: 3px solid transparent; transition: all .15s; user-select: none; }
     .nav-item:hover { background: var(--surface2); color: var(--text); }
-    .nav-item.active {
-      border-left-color: var(--accent);
-      background: var(--surface2);
-      color: var(--text);
-    }
+    .nav-item.active { border-left-color: var(--accent); background: var(--surface2); color: var(--text); }
     .nav-item .icon { font-size: 1rem; }
 
-    /* ── Main content ── */
+    /* ── Main ── */
     main { flex: 1; padding: 2rem; overflow-y: auto; }
-
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ── Page title ── */
-    .page-title {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: .3rem;
-    }
-    .page-desc {
-      font-size: .85rem;
-      color: var(--muted);
-      margin-bottom: 1.8rem;
-    }
+    .page-title { font-size: 1.4rem; font-weight: 700; margin-bottom: .3rem; }
+    .page-desc  { font-size: .85rem; color: var(--muted); margin-bottom: 1.8rem; }
 
-    /* ── Cards / panels ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.4rem;
-      margin-bottom: 1.2rem;
-    }
-    .card-title {
-      font-size: .9rem;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .6px;
-      margin-bottom: 1rem;
-    }
+    /* ── Cards ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; margin-bottom: 1.2rem; }
+    .card-title { font-size: .9rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 1rem; }
 
-    /* ── Form elements ── */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1rem;
-    }
+    /* ── Forms ── */
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
     .form-group { display: flex; flex-direction: column; gap: .4rem; }
-    .form-group label {
-      font-size: .8rem;
-      color: var(--muted);
-      font-weight: 500;
-    }
-    .form-group select,
-    .form-group input {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      padding: .5rem .75rem;
-      font-size: .88rem;
-      font-family: var(--font);
-      outline: none;
-      transition: border-color .15s;
-    }
-    .form-group select:focus,
-    .form-group input:focus { border-color: var(--accent); }
+    .form-group label { font-size: .8rem; color: var(--muted); font-weight: 500; }
+    .form-group select, .form-group input { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .5rem .75rem; font-size: .88rem; font-family: var(--font); outline: none; transition: border-color .15s; }
+    .form-group select:focus, .form-group input:focus { border-color: var(--accent); }
 
     /* ── Buttons ── */
-    .btn {
-      cursor: pointer;
-      border: none;
-      border-radius: 6px;
-      font-family: var(--font);
-      font-size: .88rem;
-      font-weight: 600;
-      padding: .55rem 1.4rem;
-      transition: background .15s, transform .1s;
-    }
+    .btn { cursor: pointer; border: none; border-radius: 6px; font-family: var(--font); font-size: .88rem; font-weight: 600; padding: .55rem 1.4rem; transition: background .15s, transform .1s; }
     .btn:active { transform: scale(.97); }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:hover { background: var(--accent-dk); }
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--muted);
-    }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
     .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+    .btn-sm { padding: .3rem .8rem; font-size: .78rem; }
 
     /* ── Decision result ── */
-    #decision-result {
-      display: none;
-      margin-top: 1.2rem;
-    }
-    .result-box {
-      border-radius: var(--radius);
-      padding: 1.2rem 1.4rem;
-      border: 1px solid;
-    }
-    .result-box.permit {
-      background: rgba(34,197,94,.08);
-      border-color: rgba(34,197,94,.35);
-    }
-    .result-box.deny {
-      background: rgba(239,68,68,.08);
-      border-color: rgba(239,68,68,.35);
-    }
-    .result-verdict {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: .6rem;
-    }
+    #decision-result { display: none; margin-top: 1.2rem; }
+    .result-box { border-radius: var(--radius); padding: 1.2rem 1.4rem; border: 1px solid; }
+    .result-box.permit { background: rgba(34,197,94,.08); border-color: rgba(34,197,94,.35); }
+    .result-box.deny   { background: rgba(239,68,68,.08);  border-color: rgba(239,68,68,.35); }
+    .result-verdict    { font-size: 1.3rem; font-weight: 700; margin-bottom: .6rem; }
     .result-box.permit .result-verdict { color: var(--green); }
     .result-box.deny   .result-verdict { color: var(--red); }
-    .result-meta {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: .5rem .8rem;
-      font-size: .82rem;
-    }
+    .result-meta { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem .8rem; font-size: .82rem; }
     .result-label { color: var(--muted); }
     .result-value { color: var(--text); }
-    .result-reason {
-      margin-top: .8rem;
-      font-size: .82rem;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      padding-top: .7rem;
-    }
+    .result-reason { margin-top: .8rem; font-size: .82rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: .7rem; }
     .result-reason span { color: var(--text); }
 
     /* ── Tables ── */
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .84rem;
-    }
-    thead tr {
-      background: var(--surface2);
-    }
-    th {
-      text-align: left;
-      padding: .7rem 1rem;
-      font-size: .75rem;
-      text-transform: uppercase;
-      letter-spacing: .6px;
-      color: var(--muted);
-      font-weight: 600;
-      border-bottom: 1px solid var(--border);
-    }
-    td {
-      padding: .7rem 1rem;
-      border-bottom: 1px solid var(--border);
-      vertical-align: middle;
-    }
+    .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+    thead tr { background: var(--surface2); }
+    th { text-align: left; padding: .7rem 1rem; font-size: .75rem; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+    td { padding: .7rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: var(--surface2); }
 
     /* ── Badges ── */
-    .pill {
-      display: inline-block;
-      border-radius: 20px;
-      padding: 2px 9px;
-      font-size: .72rem;
-      font-weight: 600;
-    }
-    .pill-blue   { background: rgba(79,110,247,.2); color: #7e9aff; }
-    .pill-green  { background: rgba(34,197,94,.15); color: #4ade80; }
-    .pill-red    { background: rgba(239,68,68,.15); color: #f87171; }
+    .pill { display: inline-block; border-radius: 20px; padding: 2px 9px; font-size: .72rem; font-weight: 600; }
+    .pill-blue   { background: rgba(79,110,247,.2);  color: #7e9aff; }
+    .pill-green  { background: rgba(34,197,94,.15);  color: #4ade80; }
+    .pill-red    { background: rgba(239,68,68,.15);  color: #f87171; }
     .pill-yellow { background: rgba(245,158,11,.15); color: #fbbf24; }
-    .pill-gray   { background: rgba(136,146,164,.15); color: #a0aec0; }
+    .pill-gray   { background: rgba(136,146,164,.15);color: #a0aec0; }
     .pill-purple { background: rgba(168,85,247,.15); color: #c084fc; }
+    .pill-orange { background: rgba(249,115,22,.15); color: #fb923c; }
 
-    /* ── Stats row ── */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.8rem;
-    }
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem 1.2rem;
-    }
+    /* ── Stats ── */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.8rem; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; }
     .stat-label { font-size: .75rem; color: var(--muted); margin-bottom: .3rem; }
     .stat-value { font-size: 1.8rem; font-weight: 700; }
 
     /* ── Filters ── */
-    .filters {
-      display: flex;
-      gap: .7rem;
-      margin-bottom: 1rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .filters input, .filters select {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      padding: .4rem .75rem;
-      font-size: .82rem;
-      font-family: var(--font);
-      outline: none;
-    }
+    .filters { display: flex; gap: .7rem; margin-bottom: 1rem; align-items: center; flex-wrap: wrap; }
+    .filters input, .filters select { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .4rem .75rem; font-size: .82rem; font-family: var(--font); outline: none; }
     .filters input:focus, .filters select:focus { border-color: var(--accent); }
 
-    /* ── Loading spinner ── */
-    .spinner {
-      display: inline-block;
-      width: 18px; height: 18px;
-      border: 2px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin .6s linear infinite;
-      vertical-align: middle;
-      margin-right: .5rem;
-    }
+    /* ── Spinner ── */
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; margin-right: .5rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Empty state ── */
-    .empty {
-      text-align: center;
-      padding: 3rem;
-      color: var(--muted);
-      font-size: .9rem;
-    }
+    .empty { text-align: center; padding: 3rem; color: var(--muted); font-size: .9rem; }
 
-    /* ── Context section ── */
-    .context-toggle {
-      font-size: .8rem;
-      color: var(--accent);
-      cursor: pointer;
-      margin-top: .5rem;
-      display: inline-block;
-    }
+    /* ── Context toggle ── */
+    .context-toggle { font-size: .8rem; color: var(--accent); cursor: pointer; margin-top: .5rem; display: inline-block; }
     #context-fields { display: none; margin-top: .8rem; }
 
-    /* ── Scenario buttons ── */
-    .scenario-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .5rem;
-    }
-    .scenario-btn {
-      font-size: .75rem;
-      padding: .35rem .9rem;
-      border-radius: 20px;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--surface2);
-      color: var(--muted);
-      font-family: var(--font);
-      transition: all .15s;
-    }
-    .scenario-btn:hover {
-      border-color: var(--accent);
-      color: var(--text);
-    }
+    /* ── Scenarios ── */
+    .scenario-list { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .scenario-btn { font-size: .75rem; padding: .35rem .9rem; border-radius: 20px; cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); font-family: var(--font); transition: all .15s; }
+    .scenario-btn:hover { border-color: var(--accent); color: var(--text); }
+
+    /* ── Hierarchy tree ── */
+    .hierarchy-tree { font-size: .85rem; line-height: 2; }
+    .h-node { display: flex; align-items: center; gap: .5rem; padding: .3rem 0; }
+    .h-node .h-line { color: var(--muted); font-family: monospace; }
+    .h-inherited-badge { font-size: .68rem; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; margin-left: .3rem; }
+
+    /* ── Constraint table ── */
+    .excl-pair { display: flex; align-items: center; gap: .5rem; }
+    .excl-sep  { color: var(--red); font-weight: 700; font-size: 1rem; }
+
+    /* ── Toast ── */
+    #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; padding: .7rem 1.2rem; border-radius: var(--radius); font-size: .85rem; font-weight: 600; display: none; z-index: 999; }
+    #toast.success { background: rgba(34,197,94,.9); color: #fff; }
+    #toast.error   { background: rgba(239,68,68,.9);  color: #fff; }
+
+    /* ── Section divider ── */
+    .section-sep { border: none; border-top: 1px solid var(--border); margin: 1.4rem 0; }
   </style>
 </head>
 <body>
 
 <header>
   <span class="logo">AccessControl</span>
-  <span class="subtitle">Hybrid RBAC + ABAC System</span>
-  <span class="badge">CS 528 &mdash; HW4</span>
+  <span class="subtitle">Hybrid RBAC + ABAC &mdash; RBAC1/RBAC2</span>
+  <span class="badge">CS 528 &mdash; GP4</span>
+  <div class="admin-session">
+    <span>Acting as:</span>
+    <select id="session-user">
+      <option value="">Loading...</option>
+    </select>
+    <span id="session-badge">—</span>
+  </div>
 </header>
 
 <div class="layout">
-
-  <!-- Sidebar -->
   <nav class="sidebar">
     <div class="nav-section">System</div>
-    <div class="nav-item active" data-tab="simulator">
-      <span class="icon">&#9654;</span> Simulator
-    </div>
+    <div class="nav-item active" data-tab="simulator"><span class="icon">&#9654;</span> Simulator</div>
+
     <div class="nav-section" style="margin-top:.8rem">Admin (PAP)</div>
-    <div class="nav-item" data-tab="users">
-      <span class="icon">&#128100;</span> Users
-    </div>
-    <div class="nav-item" data-tab="resources">
-      <span class="icon">&#128196;</span> Resources
-    </div>
-    <div class="nav-item" data-tab="roles">
-      <span class="icon">&#128737;</span> Roles
-    </div>
+    <div class="nav-item" data-tab="users">    <span class="icon">&#128100;</span> Users</div>
+    <div class="nav-item" data-tab="register"> <span class="icon">&#43;</span> Register User</div>
+    <div class="nav-item" data-tab="resources"><span class="icon">&#128196;</span> Resources</div>
+    <div class="nav-item" data-tab="roles">    <span class="icon">&#128737;</span> Roles &amp; Hierarchy</div>
+    <div class="nav-item" data-tab="perms">    <span class="icon">&#128275;</span> Add Permission</div>
+    <div class="nav-item" data-tab="constraints"><span class="icon">&#9940;</span> RBAC2 Constraints</div>
+
     <div class="nav-section" style="margin-top:.8rem">Audit</div>
-    <div class="nav-item" data-tab="logs">
-      <span class="icon">&#128203;</span> Access Logs
-    </div>
+    <div class="nav-item" data-tab="logs"><span class="icon">&#128203;</span> Access Logs</div>
   </nav>
 
   <main>
 
-    <!-- ══ SIMULATOR ══════════════════════════════════════════════════ -->
+    <!-- ══ SIMULATOR ═════════════════════════════════════════════════════════ -->
     <div class="tab-panel active" id="tab-simulator">
       <div class="page-title">Access Request Simulator</div>
       <div class="page-desc">PEP — submit an access request and see the PDP decision in real time.</div>
 
-      <!-- Quick scenarios -->
       <div class="card">
         <div class="card-title">Quick Scenarios</div>
         <div class="scenario-list" id="scenarios"></div>
       </div>
 
-      <!-- Request form -->
       <div class="card">
         <div class="card-title">Build Request</div>
         <div class="form-grid">
           <div class="form-group">
             <label>User</label>
-            <select id="req-user">
-              <option value="">Loading...</option>
-            </select>
+            <select id="req-user"><option value="">Loading...</option></select>
           </div>
           <div class="form-group">
             <label>Resource</label>
-            <select id="req-resource">
-              <option value="">Loading...</option>
-            </select>
+            <select id="req-resource"><option value="">Loading...</option></select>
           </div>
           <div class="form-group">
             <label>Action</label>
             <select id="req-action">
               <option value="read">read</option>
               <option value="write">write</option>
+              <option value="comment">comment</option>
               <option value="delete">delete</option>
               <option value="share">share</option>
               <option value="send">send</option>
@@ -443,43 +234,37 @@
 
         <span class="context-toggle" id="context-toggle">+ Context attributes (optional)</span>
         <div id="context-fields">
-          <div class="form-grid">
+          <div class="form-grid" style="margin-top:.5rem">
             <div class="form-group">
               <label>Hour of day (0–23)</label>
               <input type="number" id="ctx-hour" min="0" max="23" placeholder="e.g. 14" />
             </div>
             <div class="form-group">
               <label>Device type</label>
-              <input type="text" id="ctx-device" placeholder="e.g. corporate, personal" />
+              <input type="text" id="ctx-device" placeholder="corporate | personal" />
             </div>
             <div class="form-group">
               <label>Login location</label>
-              <input type="text" id="ctx-location" placeholder="e.g. office, remote" />
+              <input type="text" id="ctx-location" placeholder="office | remote" />
             </div>
           </div>
         </div>
 
         <div style="margin-top:1.2rem; display:flex; gap:.7rem; align-items:center;">
           <button class="btn btn-primary" id="btn-evaluate">Evaluate Access</button>
-          <button class="btn btn-ghost" id="btn-clear">Clear</button>
+          <button class="btn btn-ghost"   id="btn-clear">Clear</button>
           <span id="req-spinner" style="display:none"><span class="spinner"></span></span>
         </div>
 
-        <!-- Result -->
         <div id="decision-result">
           <div class="result-box" id="result-box">
             <div class="result-verdict" id="result-verdict"></div>
             <div class="result-meta">
-              <span class="result-label">User</span>
-              <span class="result-value" id="res-user"></span>
-              <span class="result-label">Resource</span>
-              <span class="result-value" id="res-resource"></span>
-              <span class="result-label">Action</span>
-              <span class="result-value" id="res-action"></span>
-              <span class="result-label">RBAC</span>
-              <span class="result-value" id="res-rbac"></span>
-              <span class="result-label">ABAC</span>
-              <span class="result-value" id="res-abac"></span>
+              <span class="result-label">User</span>     <span class="result-value" id="res-user"></span>
+              <span class="result-label">Resource</span> <span class="result-value" id="res-resource"></span>
+              <span class="result-label">Action</span>   <span class="result-value" id="res-action"></span>
+              <span class="result-label">RBAC</span>     <span class="result-value" id="res-rbac"></span>
+              <span class="result-label">ABAC</span>     <span class="result-value" id="res-abac"></span>
             </div>
             <div class="result-reason">Reason: <span id="res-reason"></span></div>
           </div>
@@ -487,15 +272,15 @@
       </div>
     </div>
 
-    <!-- ══ USERS ══════════════════════════════════════════════════════ -->
+    <!-- ══ USERS ══════════════════════════════════════════════════════════════ -->
     <div class="tab-panel" id="tab-users">
       <div class="page-title">Users</div>
-      <div class="page-desc">All registered users and their assigned roles.</div>
+      <div class="page-desc">All registered users, their attributes and assigned roles.</div>
 
       <div class="stats-row" id="user-stats"></div>
 
       <div class="filters">
-        <input type="text" id="user-search" placeholder="Search username or email..." style="width:260px" />
+        <input type="text" id="user-search" placeholder="Search username or email…" style="width:260px" />
         <select id="user-role-filter">
           <option value="">All roles</option>
           <option value="administrator">Administrator</option>
@@ -511,24 +296,80 @@
         <table>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Employment</th>
-              <th>Department</th>
-              <th>Clearance</th>
-              <th>Auditor</th>
-              <th>Roles</th>
+              <th>ID</th><th>Username</th><th>Email</th><th>Employment</th>
+              <th>Department</th><th>Clearance</th><th>Auditor</th><th>Roles</th>
+              <th>Assign Role</th>
             </tr>
           </thead>
           <tbody id="users-tbody">
-            <tr><td colspan="8" class="empty">Loading...</td></tr>
+            <tr><td colspan="9" class="empty">Loading...</td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- ══ RESOURCES ══════════════════════════════════════════════════ -->
+    <!-- ══ REGISTER USER ══════════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-register">
+      <div class="page-title">Register User</div>
+      <div class="page-desc">Create a new user and optionally assign an initial role (requires Admin session).</div>
+
+      <div class="card">
+        <div class="card-title">New User Details</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="reg-username" placeholder="e.g. john_doe" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="reg-email" placeholder="john@org.com" />
+          </div>
+          <div class="form-group">
+            <label>Employment Type</label>
+            <select id="reg-emptype">
+              <option value="full-time">Full-time</option>
+              <option value="contractor">Contractor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <input type="text" id="reg-dept" placeholder="e.g. Engineering" />
+          </div>
+          <div class="form-group">
+            <label>Clearance Level</label>
+            <select id="reg-clearance">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Auditor</label>
+            <select id="reg-auditor">
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Initial Role (optional)</label>
+            <select id="reg-role">
+              <option value="">— none —</option>
+              <option value="administrator">administrator</option>
+              <option value="manager">manager</option>
+              <option value="employee">employee</option>
+              <option value="contractor">contractor</option>
+              <option value="viewer">viewer</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:1.2rem">
+          <button class="btn btn-primary" id="btn-register">Register User</button>
+        </div>
+        <div id="reg-result" style="margin-top:1rem;font-size:.85rem;display:none"></div>
+      </div>
+    </div>
+
+    <!-- ══ RESOURCES ══════════════════════════════════════════════════════════ -->
     <div class="tab-panel" id="tab-resources">
       <div class="page-title">Resources</div>
       <div class="page-desc">Protected objects in the system — Docs, Gmail, Drive, and Calendar.</div>
@@ -553,14 +394,7 @@
       <div class="table-wrap">
         <table>
           <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Owner ID</th>
-              <th>Sensitivity</th>
-              <th>Department</th>
-            </tr>
+            <tr><th>ID</th><th>Name</th><th>Type</th><th>Owner ID</th><th>Sensitivity</th><th>Department</th></tr>
           </thead>
           <tbody id="resources-tbody">
             <tr><td colspan="6" class="empty">Loading...</td></tr>
@@ -569,19 +403,111 @@
       </div>
     </div>
 
-    <!-- ══ ROLES ══════════════════════════════════════════════════════ -->
+    <!-- ══ ROLES & HIERARCHY ══════════════════════════════════════════════════ -->
     <div class="tab-panel" id="tab-roles">
-      <div class="page-title">Roles &amp; Permissions</div>
-      <div class="page-desc">RBAC permission matrix — which roles can perform which actions on which resource types.</div>
+      <div class="page-title">Roles &amp; Hierarchy (RBAC1)</div>
+      <div class="page-desc">Permission matrix with inherited permissions shown. Senior roles inherit all permissions from their parent role.</div>
+
+      <!-- Hierarchy tree -->
+      <div class="card">
+        <div class="card-title">Role Hierarchy Tree</div>
+        <div id="hierarchy-tree">
+          <div class="empty"><span class="spinner"></span>Loading…</div>
+        </div>
+      </div>
+
+      <!-- Permission matrix per role -->
       <div id="roles-container">
-        <div class="empty">Loading...</div>
+        <div class="empty"><span class="spinner"></span>Loading…</div>
       </div>
     </div>
 
-    <!-- ══ LOGS ══════════════════════════════════════════════════════ -->
+    <!-- ══ ADD PERMISSION ══════════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-perms">
+      <div class="page-title">Add Permission to Role</div>
+      <div class="page-desc">Grant a new action on a resource type to any role (requires Admin session).</div>
+
+      <div class="card">
+        <div class="card-title">New Permission</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Role</label>
+            <select id="perm-role">
+              <option value="administrator">administrator</option>
+              <option value="manager">manager</option>
+              <option value="employee">employee</option>
+              <option value="contractor">contractor</option>
+              <option value="viewer">viewer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Resource Type</label>
+            <select id="perm-restype">
+              <option value="docs">docs</option>
+              <option value="gmail">gmail</option>
+              <option value="drive">drive</option>
+              <option value="calendar">calendar</option>
+              <option value="system">system</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Action</label>
+            <select id="perm-action">
+              <option value="read">read</option>
+              <option value="write">write</option>
+              <option value="comment">comment</option>
+              <option value="delete">delete</option>
+              <option value="share">share</option>
+              <option value="send">send</option>
+              <option value="admin">admin</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:1.2rem">
+          <button class="btn btn-primary" id="btn-add-perm">Add Permission</button>
+        </div>
+        <div id="perm-result" style="margin-top:1rem;font-size:.85rem;display:none"></div>
+      </div>
+    </div>
+
+    <!-- ══ RBAC2 CONSTRAINTS ══════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-constraints">
+      <div class="page-title">RBAC2 Constraints</div>
+      <div class="page-desc">Static Separation-of-Duties exclusions and cardinality limits enforced at role assignment time.</div>
+
+      <div class="card">
+        <div class="card-title">Mutually Exclusive Role Pairs (SoD)</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Role A</th><th></th><th>Role B</th><th>Reason</th></tr>
+            </thead>
+            <tbody id="excl-tbody">
+              <tr><td colspan="4" class="empty"><span class="spinner"></span>Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Cardinality Limits</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Role</th><th>Description</th><th>Max Users</th><th>Current</th><th>Status</th></tr>
+            </thead>
+            <tbody id="card-tbody">
+              <tr><td colspan="5" class="empty"><span class="spinner"></span>Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ LOGS ══════════════════════════════════════════════════════════════ -->
     <div class="tab-panel" id="tab-logs">
       <div class="page-title">Access Logs</div>
-      <div class="page-desc">All access decisions recorded by the PDP.</div>
+      <div class="page-desc">All access decisions recorded by the PDP. Requires Admin session.</div>
 
       <div class="stats-row" id="log-stats"></div>
 
@@ -603,15 +529,7 @@
       <div class="table-wrap">
         <table>
           <thead>
-            <tr>
-              <th>ID</th>
-              <th>Timestamp</th>
-              <th>User ID</th>
-              <th>Resource</th>
-              <th>Action</th>
-              <th>Decision</th>
-              <th>Reason</th>
-            </tr>
+            <tr><th>ID</th><th>Timestamp</th><th>User ID</th><th>Resource</th><th>Action</th><th>Decision</th><th>Reason</th></tr>
           </thead>
           <tbody id="logs-tbody">
             <tr><td colspan="7" class="empty">Loading...</td></tr>
@@ -623,8 +541,29 @@
   </main>
 </div>
 
+<!-- Toast -->
+<div id="toast"></div>
+
 <script>
-// ── Navigation ──────────────────────────────────────────────────────────────
+// ── Session / Admin user ──────────────────────────────────────────────────────
+let sessionUserId = null;
+let allUsers      = [];
+let allResources  = [];
+
+function getSessionId() { return sessionUserId; }
+
+document.getElementById('session-user').addEventListener('change', function() {
+  sessionUserId = this.value ? +this.value : null;
+  const user = allUsers.find(u => u.id === sessionUserId);
+  const badge = document.getElementById('session-badge');
+  if (!user) { badge.textContent = '—'; badge.style.background = 'rgba(136,146,164,.2)'; badge.style.color='#a0aec0'; return; }
+  // Lookup role from cached detail — just show username for now
+  badge.textContent = user.username;
+  badge.style.background = 'rgba(79,110,247,.2)';
+  badge.style.color = '#7e9aff';
+});
+
+// ── Navigation ────────────────────────────────────────────────────────────────
 const navItems = document.querySelectorAll('.nav-item');
 navItems.forEach(item => {
   item.addEventListener('click', () => {
@@ -633,65 +572,69 @@ navItems.forEach(item => {
     const tab = item.dataset.tab;
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.getElementById('tab-' + tab).classList.add('active');
-    if (tab === 'users') loadUsers();
-    if (tab === 'resources') loadResources();
-    if (tab === 'roles') loadRoles();
-    if (tab === 'logs') loadLogs();
+    if (tab === 'users')        loadUsers();
+    if (tab === 'resources')    loadResources();
+    if (tab === 'roles')        loadRoles();
+    if (tab === 'logs')         loadLogs();
+    if (tab === 'constraints')  loadConstraints();
   });
 });
 
-// ── Context toggle ──────────────────────────────────────────────────────────
+// ── Context toggle ────────────────────────────────────────────────────────────
 document.getElementById('context-toggle').addEventListener('click', function() {
   const f = document.getElementById('context-fields');
-  const visible = f.style.display === 'grid' || f.style.display === 'block';
+  const visible = f.style.display === 'block';
   f.style.display = visible ? 'none' : 'block';
   this.textContent = visible ? '+ Context attributes (optional)' : '− Context attributes';
 });
 
-// ── Helpers ─────────────────────────────────────────────────────────────────
-async function api(path) {
-  const r = await fetch(path);
-  return r.json();
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function toast(msg, type='success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = type;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 3000);
 }
 
-function clearanceColor(c) {
-  return c === 'high' ? 'pill-green' : c === 'medium' ? 'pill-yellow' : 'pill-gray';
-}
-function sensitivityColor(s) {
-  return s === 'confidential' ? 'pill-red' : s === 'internal' ? 'pill-yellow' : 'pill-green';
-}
-function typeColor(t) {
-  const m = { docs:'pill-blue', gmail:'pill-purple', drive:'pill-yellow', calendar:'pill-green' };
-  return m[t] || 'pill-gray';
-}
-function roleColor(r) {
-  const m = {administrator:'pill-red',manager:'pill-blue',employee:'pill-green',contractor:'pill-yellow',viewer:'pill-gray'};
-  return m[r] || 'pill-gray';
+// ── API helpers ───────────────────────────────────────────────────────────────
+async function apiFetch(path, opts={}) {
+  const r = await fetch(path, opts);
+  const json = await r.json();
+  if (!r.ok) throw new Error(json.error || r.statusText);
+  return json;
 }
 
-// ── Load users ───────────────────────────────────────────────────────────────
-let allUsers = [];
+// ── Colour helpers ────────────────────────────────────────────────────────────
+function clearanceColor(c) { return c==='high'?'pill-green':c==='medium'?'pill-yellow':'pill-gray'; }
+function sensitivityColor(s){ return s==='confidential'?'pill-red':s==='internal'?'pill-yellow':'pill-green'; }
+function typeColor(t)       { return {docs:'pill-blue',gmail:'pill-purple',drive:'pill-yellow',calendar:'pill-green'}[t]||'pill-gray'; }
+function roleColor(r)       { return {administrator:'pill-red',manager:'pill-blue',employee:'pill-green',contractor:'pill-yellow',viewer:'pill-gray'}[r]||'pill-gray'; }
+function actionColor(a)     { return {read:'pill-gray',write:'pill-blue',comment:'pill-purple',delete:'pill-red',share:'pill-green',send:'pill-orange',admin:'pill-red'}[a]||'pill-gray'; }
+
+// ── Load users ────────────────────────────────────────────────────────────────
 async function loadUsers() {
   const tbody = document.getElementById('users-tbody');
-  tbody.innerHTML = '<tr><td colspan="8" class="empty"><span class="spinner"></span>Loading...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="9" class="empty"><span class="spinner"></span>Loading...</td></tr>';
+  const sid = getSessionId();
+  if (!sid) { tbody.innerHTML = '<tr><td colspan="9" class="empty">Select an Admin user in the header first.</td></tr>'; return; }
   try {
-    allUsers = await api('/admin/users');
+    allUsers = await apiFetch(`/admin/users?admin_id=${sid}`);
     renderUsers();
     renderUserStats();
     populateUserSelect();
+    populateSessionSelect();
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="8" class="empty">Failed to load users.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="9" class="empty">${e.message}</td></tr>`;
   }
 }
 
 function renderUsers() {
   const search = document.getElementById('user-search').value.toLowerCase();
-  const roleF  = document.getElementById('user-role-filter').value;
   let data = allUsers;
   if (search) data = data.filter(u => u.username.toLowerCase().includes(search) || u.email.toLowerCase().includes(search));
-  // role filter needs roles — skip for now (roles populated via detail endpoint)
   const tbody = document.getElementById('users-tbody');
-  if (!data.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty">No users found.</td></tr>'; return; }
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="9" class="empty">No users found.</td></tr>'; return; }
   tbody.innerHTML = data.map(u => `
     <tr>
       <td>${u.id}</td>
@@ -700,21 +643,55 @@ function renderUsers() {
       <td><span class="pill ${u.employment_type==='contractor'?'pill-yellow':'pill-blue'}">${u.employment_type}</span></td>
       <td>${u.department}</td>
       <td><span class="pill ${clearanceColor(u.clearance_level)}">${u.clearance_level}</span></td>
-      <td>${u.is_auditor ? '<span class="pill pill-purple">Yes</span>' : '<span style="color:var(--muted)">—</span>'}</td>
-      <td id="roles-${u.id}"><span style="color:var(--muted);font-size:.75rem">...</span></td>
+      <td>${u.is_auditor?'<span class="pill pill-purple">Yes</span>':'<span style="color:var(--muted)">—</span>'}</td>
+      <td id="roles-${u.id}"><span style="color:var(--muted);font-size:.75rem">…</span></td>
+      <td>
+        <div style="display:flex;gap:.4rem;align-items:center">
+          <select id="assign-role-${u.id}" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.25rem .5rem;font-size:.75rem;font-family:var(--font);outline:none">
+            <option value="">role…</option>
+            <option value="administrator">administrator</option>
+            <option value="manager">manager</option>
+            <option value="employee">employee</option>
+            <option value="contractor">contractor</option>
+            <option value="viewer">viewer</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="assignRoleInline(${u.id})">Assign</button>
+        </div>
+      </td>
     </tr>
   `).join('');
-  // async-load roles for each user
   data.forEach(u => loadUserRoles(u.id));
 }
 
 async function loadUserRoles(uid) {
   try {
-    const detail = await api(`/admin/users/${uid}`);
+    const detail = await apiFetch(`/admin/users/${uid}`);
     const cell = document.getElementById('roles-' + uid);
     if (!cell) return;
-    cell.innerHTML = detail.roles.map(r => `<span class="pill ${roleColor(r.name)}" style="margin-right:3px">${r.name}</span>`).join('') || '<span style="color:var(--muted)">—</span>';
+    cell.innerHTML = detail.roles.map(r =>
+      `<span class="pill ${roleColor(r.name)}" style="margin-right:3px" title="Inherits: ${r.inherits.join(' → ') || 'none'}">${r.name}</span>`
+    ).join('') || '<span style="color:var(--muted)">—</span>';
   } catch(e) {}
+}
+
+async function assignRoleInline(uid) {
+  const sel  = document.getElementById(`assign-role-${uid}`);
+  const role = sel.value;
+  if (!role) return;
+  const sid = getSessionId();
+  if (!sid) { toast('Select an Admin session first', 'error'); return; }
+  try {
+    await apiFetch(`/admin/users/${uid}/role`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({admin_id: sid, role}),
+    });
+    toast(`Role '${role}' assigned`);
+    loadUserRoles(uid);
+    sel.value = '';
+  } catch(e) {
+    toast(e.message, 'error');
+  }
 }
 
 function renderUserStats() {
@@ -734,17 +711,66 @@ function renderUserStats() {
 document.getElementById('user-search').addEventListener('input', renderUsers);
 document.getElementById('user-role-filter').addEventListener('change', renderUsers);
 
+// ── Register User ─────────────────────────────────────────────────────────────
+document.getElementById('btn-register').addEventListener('click', async () => {
+  const sid = getSessionId();
+  if (!sid) { toast('Select an Admin session first', 'error'); return; }
+  const username  = document.getElementById('reg-username').value.trim();
+  const email     = document.getElementById('reg-email').value.trim();
+  const emptype   = document.getElementById('reg-emptype').value;
+  const dept      = document.getElementById('reg-dept').value.trim();
+  const clearance = document.getElementById('reg-clearance').value;
+  const auditor   = document.getElementById('reg-auditor').value;
+  const role      = document.getElementById('reg-role').value;
+  const resultEl  = document.getElementById('reg-result');
+
+  resultEl.style.display = 'none';
+
+  try {
+    const user = await apiFetch('/admin/users', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ admin_id: sid, username, email, employment_type: emptype, department: dept, clearance_level: clearance, is_auditor: +auditor }),
+    });
+
+    let msg = `User '${user.username}' created (ID ${user.id}).`;
+
+    if (role) {
+      try {
+        await apiFetch(`/admin/users/${user.id}/role`, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({admin_id: sid, role}),
+        });
+        msg += ` Role '${role}' assigned.`;
+      } catch(re) {
+        msg += ` Warning — role assignment failed: ${re.message}`;
+      }
+    }
+
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = `<span style="color:var(--green)">${msg}</span>`;
+    toast('User registered!');
+    // clear form
+    ['reg-username','reg-email','reg-dept'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('reg-role').value = '';
+  } catch(e) {
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = `<span style="color:var(--red)">Error: ${e.message}</span>`;
+    toast(e.message, 'error');
+  }
+});
+
 // ── Load resources ────────────────────────────────────────────────────────────
-let allResources = [];
 async function loadResources() {
   const tbody = document.getElementById('resources-tbody');
   tbody.innerHTML = '<tr><td colspan="6" class="empty"><span class="spinner"></span>Loading...</td></tr>';
   try {
-    allResources = await api('/admin/resources');
+    allResources = await apiFetch('/admin/resources');
     renderResources();
     populateResourceSelect();
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty">Failed to load resources.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="6" class="empty">${e.message}</td></tr>`;
   }
 }
 
@@ -761,9 +787,9 @@ function renderResources() {
       <td>${r.id}</td>
       <td><strong>${r.name}</strong></td>
       <td><span class="pill ${typeColor(r.resource_type)}">${r.resource_type}</span></td>
-      <td>${r.owner_id || '<span style="color:var(--muted)">—</span>'}</td>
+      <td>${r.owner_id||'<span style="color:var(--muted)">—</span>'}</td>
       <td><span class="pill ${sensitivityColor(r.sensitivity_level)}">${r.sensitivity_level}</span></td>
-      <td>${r.department || '<span style="color:var(--muted)">—</span>'}</td>
+      <td>${r.department||'<span style="color:var(--muted)">—</span>'}</td>
     </tr>
   `).join('');
 }
@@ -771,47 +797,194 @@ function renderResources() {
 document.getElementById('res-type-filter').addEventListener('change', renderResources);
 document.getElementById('res-sens-filter').addEventListener('change', renderResources);
 
-// ── Load roles ────────────────────────────────────────────────────────────────
+// ── Load roles + hierarchy ────────────────────────────────────────────────────
 async function loadRoles() {
-  const container = document.getElementById('roles-container');
-  container.innerHTML = '<div class="empty"><span class="spinner"></span>Loading...</div>';
+  const container   = document.getElementById('roles-container');
+  const hierarchyEl = document.getElementById('hierarchy-tree');
+  container.innerHTML   = '<div class="empty"><span class="spinner"></span>Loading...</div>';
+  hierarchyEl.innerHTML = '<div class="empty"><span class="spinner"></span>Loading...</div>';
   try {
-    const roles = await api('/admin/roles');
-    const ACTIONS = ['read','write','delete','share','send','admin'];
-    const TYPES   = ['docs','gmail','drive','calendar','system'];
-
-    container.innerHTML = roles.map(role => {
-      const permSet = new Set(role.permissions.map(p => p.resource_type + ':' + p.action));
-      const grid = TYPES.map(type => {
-        const cells = ACTIONS.map(action => {
-          const has = permSet.has(type+':'+action);
-          return `<td style="text-align:center">${has
-            ? '<span style="color:var(--green);font-size:1rem">&#10003;</span>'
-            : '<span style="color:var(--border);font-size:.8rem">&#10007;</span>'
-          }</td>`;
-        }).join('');
-        return `<tr><td style="color:var(--muted);font-size:.8rem;padding-left:1rem">${type}</td>${cells}</tr>`;
-      }).join('');
-
-      return `
-        <div class="card" style="margin-bottom:1rem">
-          <div class="card-title" style="display:flex;align-items:center;gap:.5rem">
-            <span class="pill ${roleColor(role.name)}">${role.name}</span>
-            <span style="font-size:.8rem;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">${role.description||''}</span>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr>
-                <th>Resource Type</th>
-                ${ACTIONS.map(a=>`<th style="text-align:center">${a}</th>`).join('')}
-              </tr></thead>
-              <tbody>${grid}</tbody>
-            </table>
-          </div>
-        </div>`;
-    }).join('');
+    const roles = await apiFetch('/admin/roles');
+    renderHierarchyTree(roles, hierarchyEl);
+    renderRoleMatrix(roles, container);
   } catch(e) {
-    container.innerHTML = '<div class="empty">Failed to load roles.</div>';
+    container.innerHTML   = `<div class="empty">${e.message}</div>`;
+    hierarchyEl.innerHTML = `<div class="empty">${e.message}</div>`;
+  }
+}
+
+function renderHierarchyTree(roles, el) {
+  // Build tree: find roots (no parent in our role list)
+  const byName = Object.fromEntries(roles.map(r => [r.name, r]));
+  const roots  = roles.filter(r => !r.parent_role || !byName[r.parent_role]);
+  const chains = roles.filter(r => r.parent_role && byName[r.parent_role]);
+
+  // Display hierarchy chains
+  const chainStarts = roles.filter(r => {
+    // It's a chain start if something inherits from it but it has no parent
+    return !r.parent_role;
+  });
+
+  function nodeHtml(role, depth) {
+    const indent = '&nbsp;'.repeat(depth * 6);
+    const arrow  = depth > 0 ? '<span style="color:var(--muted)">↳</span> ' : '';
+    const inheritsFrom = role.hierarchy_chain.slice(1);
+    const inhBadge = inheritsFrom.length
+      ? `<span class="h-inherited-badge">inherits: ${inheritsFrom.join(' → ')}</span>`
+      : `<span class="h-inherited-badge">base role</span>`;
+    return `<div style="margin:.25rem 0;display:flex;align-items:center;gap:.5rem">
+      ${indent}${arrow}<span class="pill ${roleColor(role.name)}">${role.name}</span>
+      <span style="font-size:.78rem;color:var(--muted)">${role.description||''}</span>
+      ${inhBadge}
+      ${role.max_users!=null?`<span style="font-size:.7rem;color:var(--yellow);border:1px solid rgba(245,158,11,.3);border-radius:4px;padding:1px 6px">max ${role.max_users}</span>`:''}
+    </div>`;
+  }
+
+  // Topological sort by hierarchy chain length (longer chain = deeper in hierarchy)
+  const sorted = [...roles].sort((a,b) => b.hierarchy_chain.length - a.hierarchy_chain.length);
+  const senior = sorted[0]; // deepest chain = most senior
+
+  // Render chain from most senior down
+  let html = '<div style="padding:.5rem 0">';
+  const chainRole = roles.find(r => !roles.some(r2 => r2.parent_role === r.name) && r.hierarchy_chain.length > 1);
+  // Main chain: administrator -> manager -> employee
+  const mainChain = [];
+  if (chainRole) {
+    let cur = chainRole;
+    mainChain.push(cur);
+    while (cur.parent_role && byName[cur.parent_role]) {
+      cur = byName[cur.parent_role];
+      mainChain.push(cur);
+    }
+  }
+
+  html += '<div style="font-size:.78rem;color:var(--muted);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.6px">Main Hierarchy Chain</div>';
+  mainChain.forEach((r, i) => { html += nodeHtml(r, i); });
+
+  const isolated = roles.filter(r => !mainChain.includes(r));
+  if (isolated.length) {
+    html += '<div style="font-size:.78rem;color:var(--muted);margin:.8rem 0 .5rem;text-transform:uppercase;letter-spacing:.6px">Isolated Roles (no hierarchy)</div>';
+    isolated.forEach(r => { html += nodeHtml(r, 0); });
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function renderRoleMatrix(roles, container) {
+  const ACTIONS = ['read','write','comment','delete','share','send','admin'];
+  const TYPES   = ['docs','gmail','drive','calendar','system'];
+
+  container.innerHTML = roles.map(role => {
+    const ownSet = new Set(role.permissions.map(p => p.resource_type + ':' + p.action));
+    const inhSet = new Set(role.inherited_permissions.map(p => p.resource_type + ':' + p.action));
+    const allSet = new Set([...ownSet, ...inhSet]);
+
+    const grid = TYPES.map(type => {
+      const cells = ACTIONS.map(action => {
+        const key = type+':'+action;
+        const own = ownSet.has(key);
+        const inh = inhSet.has(key);
+        const has = own || inh;
+        let icon;
+        if (own)      icon = `<span style="color:var(--green);font-size:1rem" title="own permission">&#10003;</span>`;
+        else if (inh) icon = `<span style="color:#60a5fa;font-size:.85rem" title="inherited permission">&#8627;</span>`;
+        else          icon = `<span style="color:var(--border);font-size:.8rem">&#10007;</span>`;
+        return `<td style="text-align:center">${icon}</td>`;
+      }).join('');
+      return `<tr><td style="color:var(--muted);font-size:.8rem;padding-left:1rem">${type}</td>${cells}</tr>`;
+    }).join('');
+
+    const chainLabel = role.hierarchy_chain.length > 1
+      ? `<span style="font-size:.72rem;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;margin-left:.4rem">← ${role.hierarchy_chain.slice(1).join(' ← ')}</span>`
+      : '';
+
+    return `
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-title" style="display:flex;align-items:center;gap:.5rem">
+          <span class="pill ${roleColor(role.name)}">${role.name}</span>
+          <span style="font-size:.8rem;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">${role.description||''}</span>
+          ${chainLabel}
+        </div>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:.8rem">
+          <span style="color:var(--green)">&#10003;</span> own &nbsp;
+          <span style="color:#60a5fa">&#8627;</span> inherited
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Resource Type</th>
+              ${ACTIONS.map(a=>`<th style="text-align:center">${a}</th>`).join('')}
+            </tr></thead>
+            <tbody>${grid}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Add Permission ────────────────────────────────────────────────────────────
+document.getElementById('btn-add-perm').addEventListener('click', async () => {
+  const sid      = getSessionId();
+  if (!sid) { toast('Select an Admin session first', 'error'); return; }
+  const role     = document.getElementById('perm-role').value;
+  const restype  = document.getElementById('perm-restype').value;
+  const action   = document.getElementById('perm-action').value;
+  const resultEl = document.getElementById('perm-result');
+  resultEl.style.display = 'none';
+  try {
+    const res = await apiFetch('/admin/permissions', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({admin_id: sid, role, resource_type: restype, action}),
+    });
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = `<span style="color:var(--green)">${res.message}</span>`;
+    toast('Permission added!');
+  } catch(e) {
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = `<span style="color:var(--red)">Error: ${e.message}</span>`;
+    toast(e.message, 'error');
+  }
+});
+
+// ── Load Constraints ──────────────────────────────────────────────────────────
+async function loadConstraints() {
+  try {
+    const data = await apiFetch('/admin/constraints');
+
+    const exclTbody = document.getElementById('excl-tbody');
+    if (!data.exclusions.length) {
+      exclTbody.innerHTML = '<tr><td colspan="4" class="empty">No exclusions defined.</td></tr>';
+    } else {
+      exclTbody.innerHTML = data.exclusions.map(e => `
+        <tr>
+          <td><span class="pill ${roleColor(e.role1)}">${e.role1}</span></td>
+          <td><span class="excl-sep">⊗</span></td>
+          <td><span class="pill ${roleColor(e.role2)}">${e.role2}</span></td>
+          <td style="font-size:.8rem;color:var(--muted)">${e.reason||'—'}</td>
+        </tr>
+      `).join('');
+    }
+
+    const cardTbody = document.getElementById('card-tbody');
+    if (!data.cardinality.length) {
+      cardTbody.innerHTML = '<tr><td colspan="5" class="empty">No cardinality limits defined.</td></tr>';
+    } else {
+      cardTbody.innerHTML = data.cardinality.map(r => {
+        const pct  = Math.round(r.current_count / r.max_users * 100);
+        const full = r.current_count >= r.max_users;
+        return `
+          <tr>
+            <td><span class="pill ${roleColor(r.name)}">${r.name}</span></td>
+            <td style="font-size:.8rem;color:var(--muted)">${r.description||'—'}</td>
+            <td>${r.max_users}</td>
+            <td>${r.current_count}</td>
+            <td><span class="pill ${full?'pill-red':'pill-green'}">${full?'FULL':'OK'} (${pct}%)</span></td>
+          </tr>`;
+      }).join('');
+    }
+  } catch(e) {
+    document.getElementById('excl-tbody').innerHTML = `<tr><td colspan="4" class="empty">${e.message}</td></tr>`;
   }
 }
 
@@ -819,14 +992,16 @@ async function loadRoles() {
 async function loadLogs() {
   const tbody = document.getElementById('logs-tbody');
   tbody.innerHTML = '<tr><td colspan="7" class="empty"><span class="spinner"></span>Loading...</td></tr>';
+  const sid = getSessionId();
+  if (!sid) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Select an Admin user in the header first.</td></tr>'; return; }
   const decision = document.getElementById('log-decision-filter').value;
   const uid      = document.getElementById('log-user-filter').value;
   const limit    = document.getElementById('log-limit').value;
-  let url = `/admin/logs?limit=${limit}`;
+  let url = `/admin/logs?admin_id=${sid}&limit=${limit}`;
   if (decision) url += `&decision=${decision}`;
-  if (uid) url += `&user_id=${uid}`;
+  if (uid)      url += `&user_id=${uid}`;
   try {
-    const logs = await api(url);
+    const logs = await apiFetch(url);
     renderLogStats(logs);
     if (!logs.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">No log entries found.</td></tr>'; return; }
     tbody.innerHTML = logs.map(l => `
@@ -834,14 +1009,14 @@ async function loadLogs() {
         <td style="color:var(--muted)">${l.id}</td>
         <td style="font-size:.77rem;color:var(--muted)">${l.timestamp}</td>
         <td>${l.user_id}</td>
-        <td>${l.resource_id ? `<span class="pill pill-blue" style="font-size:.7rem">${l.resource_type} #${l.resource_id}</span>` : `<span class="pill pill-gray" style="font-size:.7rem">${l.resource_type||'—'}</span>`}</td>
+        <td>${l.resource_id?`<span class="pill pill-blue" style="font-size:.7rem">${l.resource_type} #${l.resource_id}</span>`:`<span class="pill pill-gray" style="font-size:.7rem">${l.resource_type||'—'}</span>`}</td>
         <td><code style="font-size:.78rem;background:var(--surface2);padding:2px 6px;border-radius:4px">${l.action}</code></td>
         <td><span class="pill ${l.decision==='permit'?'pill-green':'pill-red'}">${l.decision}</span></td>
         <td style="font-size:.76rem;color:var(--muted);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${l.reason||''}">${l.reason||'—'}</td>
       </tr>
     `).join('');
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty">Failed to load logs.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="7" class="empty">${e.message}</td></tr>`;
   }
 }
 
@@ -860,7 +1035,7 @@ document.getElementById('log-decision-filter').addEventListener('change', loadLo
 document.getElementById('log-user-filter').addEventListener('input', loadLogs);
 document.getElementById('log-limit').addEventListener('change', loadLogs);
 
-// ── Populate selects ─────────────────────────────────────────────────────────
+// ── Populate selects ──────────────────────────────────────────────────────────
 function populateUserSelect() {
   const sel = document.getElementById('req-user');
   sel.innerHTML = allUsers.map(u => `<option value="${u.id}">${u.username} (${u.email})</option>`).join('');
@@ -869,21 +1044,34 @@ function populateResourceSelect() {
   const sel = document.getElementById('req-resource');
   sel.innerHTML = allResources.map(r => `<option value="${r.id}">${r.name} [${r.resource_type}/${r.sensitivity_level}]</option>`).join('');
 }
+function populateSessionSelect() {
+  const sel = document.getElementById('session-user');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— select admin —</option>' +
+    allUsers.map(u => `<option value="${u.id}"${u.id==cur?' selected':''}>${u.username}</option>`).join('');
+  if (cur) sel.value = cur;
+}
 
-// ── Quick scenarios ──────────────────────────────────────────────────────────
+// ── Quick scenarios ───────────────────────────────────────────────────────────
 const scenarios = [
-  { label: 'Employee: own doc write',        user:3, res:1, action:'write',  ctx:{} },
-  { label: 'Employee: other doc write',      user:3, res:2, action:'write',  ctx:{} },
-  { label: 'Contractor: read assigned',      user:4, res:1, action:'read',   ctx:{} },
-  { label: 'Contractor: write (blocked)',    user:4, res:1, action:'write',  ctx:{} },
-  { label: 'Manager: share Drive',           user:2, res:4, action:'share',  ctx:{} },
-  { label: 'Employee: share Drive (blocked)',user:3, res:4, action:'share',  ctx:{} },
-  { label: 'Confidential: high clearance',   user:2, res:2, action:'read',   ctx:{} },
-  { label: 'Confidential: low clearance',    user:3, res:2, action:'read',   ctx:{} },
-  { label: 'Ext. email: send (blocked)',     user:4, res:6, action:'send',   ctx:{} },
-  { label: 'Auditor: share (SoD blocked)',   user:6, res:4, action:'share',  ctx:{} },
-  { label: 'Contractor: off-hours (blocked)',user:4, res:1, action:'read',   ctx:{hour:22} },
-  { label: 'Contractor: business hours',     user:4, res:1, action:'read',   ctx:{hour:10} },
+  { label: 'Employee: own doc write',           user:3, res:1, action:'write',   ctx:{} },
+  { label: 'Employee: unowned doc write',        user:3, res:2, action:'write',   ctx:{} },
+  { label: 'Employee: comment on doc',           user:3, res:1, action:'comment', ctx:{} },
+  { label: 'Manager: inherits employee read',    user:2, res:1, action:'read',    ctx:{} },
+  { label: 'Manager: share Drive (RBAC1)',       user:2, res:4, action:'share',   ctx:{} },
+  { label: 'Contractor: assigned read',          user:4, res:1, action:'read',    ctx:{} },
+  { label: 'Contractor: unassigned read (P3)',   user:4, res:3, action:'read',    ctx:{} },
+  { label: 'Contractor: write blocked (P2)',     user:4, res:1, action:'write',   ctx:{} },
+  { label: 'Contractor: comment on assigned',   user:4, res:1, action:'comment', ctx:{} },
+  { label: 'Employee: share Drive blocked (P4)', user:3, res:4, action:'share',   ctx:{} },
+  { label: 'Confidential: high clearance',       user:2, res:2, action:'read',    ctx:{} },
+  { label: 'Confidential: low clearance (P5)',   user:3, res:2, action:'read',    ctx:{} },
+  { label: 'Ext. email: send blocked (P6)',      user:4, res:6, action:'send',    ctx:{} },
+  { label: 'Auditor: share blocked (SoD P7)',    user:6, res:4, action:'share',   ctx:{} },
+  { label: 'Contractor: off-hours blocked (P8)', user:4, res:1, action:'read',    ctx:{hour:22} },
+  { label: 'Personal device: confidential (P9)', user:2, res:2, action:'read',    ctx:{device_type:'personal'} },
+  { label: 'Remote: admin blocked (P10)',         user:1, res:1, action:'admin',   ctx:{login_location:'remote'} },
+  { label: 'Remote: conf low clearance (P11)',   user:3, res:2, action:'read',    ctx:{login_location:'remote'} },
 ];
 
 document.getElementById('scenarios').innerHTML = scenarios.map((s,i) =>
@@ -893,21 +1081,21 @@ document.getElementById('scenarios').innerHTML = scenarios.map((s,i) =>
 document.getElementById('scenarios').addEventListener('click', e => {
   if (!e.target.classList.contains('scenario-btn')) return;
   const s = scenarios[+e.target.dataset.idx];
-  document.getElementById('req-user').value   = s.user;
+  document.getElementById('req-user').value     = s.user;
   document.getElementById('req-resource').value = s.res;
-  document.getElementById('req-action').value = s.action;
-  if (s.ctx.hour !== undefined) {
-    document.getElementById('ctx-hour').value = s.ctx.hour;
-    const f = document.getElementById('context-fields');
-    f.style.display = 'block';
-    document.getElementById('context-toggle').textContent = '− Context attributes';
-  } else {
-    document.getElementById('ctx-hour').value = '';
-  }
+  document.getElementById('req-action').value   = s.action;
+  const ctx = s.ctx;
+  document.getElementById('ctx-hour').value     = ctx.hour !== undefined ? ctx.hour : '';
+  document.getElementById('ctx-device').value   = ctx.device_type    || '';
+  document.getElementById('ctx-location').value = ctx.login_location || '';
+  const ctxFields = document.getElementById('context-fields');
+  const hasCtx = Object.keys(ctx).length > 0;
+  ctxFields.style.display = hasCtx ? 'block' : 'none';
+  document.getElementById('context-toggle').textContent = hasCtx ? '− Context attributes' : '+ Context attributes (optional)';
   submitAccess();
 });
 
-// ── Evaluate access ──────────────────────────────────────────────────────────
+// ── Evaluate access ───────────────────────────────────────────────────────────
 document.getElementById('btn-evaluate').addEventListener('click', submitAccess);
 document.getElementById('btn-clear').addEventListener('click', () => {
   document.getElementById('decision-result').style.display = 'none';
@@ -923,7 +1111,6 @@ async function submitAccess() {
   const hour       = document.getElementById('ctx-hour').value;
   const device     = document.getElementById('ctx-device').value;
   const location   = document.getElementById('ctx-location').value;
-
   if (!userId || !resourceId) return;
 
   const context = {};
@@ -933,17 +1120,11 @@ async function submitAccess() {
 
   const spinner = document.getElementById('req-spinner');
   spinner.style.display = 'inline-block';
-
   try {
     const resp = await fetch('/access', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: +userId,
-        resource_id: +resourceId,
-        action,
-        context,
-      }),
+      body: JSON.stringify({ user_id: +userId, resource_id: +resourceId, action, context }),
     });
     const data = await resp.json();
     showResult(data);
@@ -958,19 +1139,39 @@ function showResult(data) {
   const isPermit = data.decision === 'permit';
   const box = document.getElementById('result-box');
   box.className = 'result-box ' + (isPermit ? 'permit' : 'deny');
-  document.getElementById('result-verdict').textContent = isPermit ? 'ACCESS GRANTED' : 'ACCESS DENIED';
-  document.getElementById('res-user').textContent     = data.user     || '—';
-  document.getElementById('res-resource').textContent = data.resource || '—';
-  document.getElementById('res-action').textContent   = data.action   || '—';
-  document.getElementById('res-rbac').textContent     = data.rbac     || '—';
-  document.getElementById('res-abac').textContent     = data.abac     || '—';
-  document.getElementById('res-reason').textContent   = data.reason   || '—';
+  document.getElementById('result-verdict').textContent  = isPermit ? 'ACCESS GRANTED' : 'ACCESS DENIED';
+  document.getElementById('res-user').textContent        = data.user     || '—';
+  document.getElementById('res-resource').textContent    = data.resource || '—';
+  document.getElementById('res-action').textContent      = data.action   || '—';
+  document.getElementById('res-rbac').textContent        = data.rbac     || '—';
+  document.getElementById('res-abac').textContent        = data.abac     || '—';
+  document.getElementById('res-reason').textContent      = data.reason   || '—';
   document.getElementById('decision-result').style.display = 'block';
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────────────
 (async function init() {
-  await Promise.all([loadUsers(), loadResources()]);
+  // Load resources (no auth needed)
+  try {
+    allResources = await apiFetch('/admin/resources');
+    populateResourceSelect();
+  } catch(e) {}
+
+  // Load users without admin auth to populate session selector
+  // We try with a guessed admin_id=1 (alice_admin) for initial load
+  try {
+    allUsers = await apiFetch('/admin/users?admin_id=1');
+    populateSessionSelect();
+    populateUserSelect();
+    renderUserStats();
+    // Default session to alice_admin (id=1)
+    document.getElementById('session-user').value = '1';
+    sessionUserId = 1;
+    const badge = document.getElementById('session-badge');
+    badge.textContent = 'alice_admin';
+  } catch(e) {
+    // Couldn't pre-load; user must select manually
+  }
 })();
 </script>
 </body>
