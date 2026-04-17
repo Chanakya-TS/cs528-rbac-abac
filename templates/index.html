@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hybrid Access Control System</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f1117;
+      --surface:   #1a1d27;
+      --surface2:  #22263a;
+      --border:    #2e3350;
+      --accent:    #4f6ef7;
+      --accent-dk: #3a57d4;
+      --green:     #22c55e;
+      --red:       #ef4444;
+      --yellow:    #f59e0b;
+      --text:      #e2e8f0;
+      --muted:     #8892a4;
+      --radius:    8px;
+      --font:      'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: .5px;
+    }
+    header .subtitle {
+      font-size: .8rem;
+      color: var(--muted);
+      border-left: 1px solid var(--border);
+      padding-left: 1rem;
+    }
+    header .badge {
+      margin-left: auto;
+      font-size: .72rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 12px;
+      color: var(--muted);
+    }
+
+    /* ── Layout ── */
+    .layout { display: flex; flex: 1; }
+
+    /* ── Sidebar ── */
+    nav.sidebar {
+      width: 200px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 0;
+      flex-shrink: 0;
+    }
+    .nav-section {
+      padding: .4rem 1rem .2rem;
+      font-size: .68rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .55rem 1.2rem;
+      cursor: pointer;
+      font-size: .88rem;
+      color: var(--muted);
+      border-left: 3px solid transparent;
+      transition: all .15s;
+      user-select: none;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active {
+      border-left-color: var(--accent);
+      background: var(--surface2);
+      color: var(--text);
+    }
+    .nav-item .icon { font-size: 1rem; }
+
+    /* ── Main content ── */
+    main { flex: 1; padding: 2rem; overflow-y: auto; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Page title ── */
+    .page-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: .3rem;
+    }
+    .page-desc {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-bottom: 1.8rem;
+    }
+
+    /* ── Cards / panels ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      margin-bottom: 1.2rem;
+    }
+    .card-title {
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Form elements ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: .4rem; }
+    .form-group label {
+      font-size: .8rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .form-group select,
+    .form-group input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: .5rem .75rem;
+      font-size: .88rem;
+      font-family: var(--font);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .form-group select:focus,
+    .form-group input:focus { border-color: var(--accent); }
+
+    /* ── Buttons ── */
+    .btn {
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: .88rem;
+      font-weight: 600;
+      padding: .55rem 1.4rem;
+      transition: background .15s, transform .1s;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-dk); }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+
+    /* ── Decision result ── */
+    #decision-result {
+      display: none;
+      margin-top: 1.2rem;
+    }
+    .result-box {
+      border-radius: var(--radius);
+      padding: 1.2rem 1.4rem;
+      border: 1px solid;
+    }
+    .result-box.permit {
+      background: rgba(34,197,94,.08);
+      border-color: rgba(34,197,94,.35);
+    }
+    .result-box.deny {
+      background: rgba(239,68,68,.08);
+      border-color: rgba(239,68,68,.35);
+    }
+    .result-verdict {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: .6rem;
+    }
+    .result-box.permit .result-verdict { color: var(--green); }
+    .result-box.deny   .result-verdict { color: var(--red); }
+    .result-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .5rem .8rem;
+      font-size: .82rem;
+    }
+    .result-label { color: var(--muted); }
+    .result-value { color: var(--text); }
+    .result-reason {
+      margin-top: .8rem;
+      font-size: .82rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: .7rem;
+    }
+    .result-reason span { color: var(--text); }
+
+    /* ── Tables ── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .84rem;
+    }
+    thead tr {
+      background: var(--surface2);
+    }
+    th {
+      text-align: left;
+      padding: .7rem 1rem;
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: .7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface2); }
+
+    /* ── Badges ── */
+    .pill {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 2px 9px;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+    .pill-blue   { background: rgba(79,110,247,.2); color: #7e9aff; }
+    .pill-green  { background: rgba(34,197,94,.15); color: #4ade80; }
+    .pill-red    { background: rgba(239,68,68,.15); color: #f87171; }
+    .pill-yellow { background: rgba(245,158,11,.15); color: #fbbf24; }
+    .pill-gray   { background: rgba(136,146,164,.15); color: #a0aec0; }
+    .pill-purple { background: rgba(168,85,247,.15); color: #c084fc; }
+
+    /* ── Stats row ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.8rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+    }
+    .stat-label { font-size: .75rem; color: var(--muted); margin-bottom: .3rem; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; }
+
+    /* ── Filters ── */
+    .filters {
+      display: flex;
+      gap: .7rem;
+      margin-bottom: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filters input, .filters select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: .4rem .75rem;
+      font-size: .82rem;
+      font-family: var(--font);
+      outline: none;
+    }
+    .filters input:focus, .filters select:focus { border-color: var(--accent); }
+
+    /* ── Loading spinner ── */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle;
+      margin-right: .5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    /* ── Context section ── */
+    .context-toggle {
+      font-size: .8rem;
+      color: var(--accent);
+      cursor: pointer;
+      margin-top: .5rem;
+      display: inline-block;
+    }
+    #context-fields { display: none; margin-top: .8rem; }
+
+    /* ── Scenario buttons ── */
+    .scenario-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+    .scenario-btn {
+      font-size: .75rem;
+      padding: .35rem .9rem;
+      border-radius: 20px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      font-family: var(--font);
+      transition: all .15s;
+    }
+    .scenario-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="logo">AccessControl</span>
+  <span class="subtitle">Hybrid RBAC + ABAC System</span>
+  <span class="badge">CS 528 &mdash; HW4</span>
+</header>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="nav-section">System</div>
+    <div class="nav-item active" data-tab="simulator">
+      <span class="icon">&#9654;</span> Simulator
+    </div>
+    <div class="nav-section" style="margin-top:.8rem">Admin (PAP)</div>
+    <div class="nav-item" data-tab="users">
+      <span class="icon">&#128100;</span> Users
+    </div>
+    <div class="nav-item" data-tab="resources">
+      <span class="icon">&#128196;</span> Resources
+    </div>
+    <div class="nav-item" data-tab="roles">
+      <span class="icon">&#128737;</span> Roles
+    </div>
+    <div class="nav-section" style="margin-top:.8rem">Audit</div>
+    <div class="nav-item" data-tab="logs">
+      <span class="icon">&#128203;</span> Access Logs
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ══ SIMULATOR ══════════════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-simulator">
+      <div class="page-title">Access Request Simulator</div>
+      <div class="page-desc">PEP — submit an access request and see the PDP decision in real time.</div>
+
+      <!-- Quick scenarios -->
+      <div class="card">
+        <div class="card-title">Quick Scenarios</div>
+        <div class="scenario-list" id="scenarios"></div>
+      </div>
+
+      <!-- Request form -->
+      <div class="card">
+        <div class="card-title">Build Request</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>User</label>
+            <select id="req-user">
+              <option value="">Loading...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Resource</label>
+            <select id="req-resource">
+              <option value="">Loading...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Action</label>
+            <select id="req-action">
+              <option value="read">read</option>
+              <option value="write">write</option>
+              <option value="delete">delete</option>
+              <option value="share">share</option>
+              <option value="send">send</option>
+              <option value="admin">admin</option>
+            </select>
+          </div>
+        </div>
+
+        <span class="context-toggle" id="context-toggle">+ Context attributes (optional)</span>
+        <div id="context-fields">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Hour of day (0–23)</label>
+              <input type="number" id="ctx-hour" min="0" max="23" placeholder="e.g. 14" />
+            </div>
+            <div class="form-group">
+              <label>Device type</label>
+              <input type="text" id="ctx-device" placeholder="e.g. corporate, personal" />
+            </div>
+            <div class="form-group">
+              <label>Login location</label>
+              <input type="text" id="ctx-location" placeholder="e.g. office, remote" />
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.2rem; display:flex; gap:.7rem; align-items:center;">
+          <button class="btn btn-primary" id="btn-evaluate">Evaluate Access</button>
+          <button class="btn btn-ghost" id="btn-clear">Clear</button>
+          <span id="req-spinner" style="display:none"><span class="spinner"></span></span>
+        </div>
+
+        <!-- Result -->
+        <div id="decision-result">
+          <div class="result-box" id="result-box">
+            <div class="result-verdict" id="result-verdict"></div>
+            <div class="result-meta">
+              <span class="result-label">User</span>
+              <span class="result-value" id="res-user"></span>
+              <span class="result-label">Resource</span>
+              <span class="result-value" id="res-resource"></span>
+              <span class="result-label">Action</span>
+              <span class="result-value" id="res-action"></span>
+              <span class="result-label">RBAC</span>
+              <span class="result-value" id="res-rbac"></span>
+              <span class="result-label">ABAC</span>
+              <span class="result-value" id="res-abac"></span>
+            </div>
+            <div class="result-reason">Reason: <span id="res-reason"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ USERS ══════════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-users">
+      <div class="page-title">Users</div>
+      <div class="page-desc">All registered users and their assigned roles.</div>
+
+      <div class="stats-row" id="user-stats"></div>
+
+      <div class="filters">
+        <input type="text" id="user-search" placeholder="Search username or email..." style="width:260px" />
+        <select id="user-role-filter">
+          <option value="">All roles</option>
+          <option value="administrator">Administrator</option>
+          <option value="manager">Manager</option>
+          <option value="employee">Employee</option>
+          <option value="contractor">Contractor</option>
+          <option value="viewer">Viewer</option>
+        </select>
+        <button class="btn btn-ghost" onclick="loadUsers()">Refresh</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Employment</th>
+              <th>Department</th>
+              <th>Clearance</th>
+              <th>Auditor</th>
+              <th>Roles</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody">
+            <tr><td colspan="8" class="empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ RESOURCES ══════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-resources">
+      <div class="page-title">Resources</div>
+      <div class="page-desc">Protected objects in the system — Docs, Gmail, Drive, and Calendar.</div>
+
+      <div class="filters">
+        <select id="res-type-filter">
+          <option value="">All types</option>
+          <option value="docs">Docs</option>
+          <option value="gmail">Gmail</option>
+          <option value="drive">Drive</option>
+          <option value="calendar">Calendar</option>
+        </select>
+        <select id="res-sens-filter">
+          <option value="">All sensitivity</option>
+          <option value="public">Public</option>
+          <option value="internal">Internal</option>
+          <option value="confidential">Confidential</option>
+        </select>
+        <button class="btn btn-ghost" onclick="loadResources()">Refresh</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Owner ID</th>
+              <th>Sensitivity</th>
+              <th>Department</th>
+            </tr>
+          </thead>
+          <tbody id="resources-tbody">
+            <tr><td colspan="6" class="empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ ROLES ══════════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-roles">
+      <div class="page-title">Roles &amp; Permissions</div>
+      <div class="page-desc">RBAC permission matrix — which roles can perform which actions on which resource types.</div>
+      <div id="roles-container">
+        <div class="empty">Loading...</div>
+      </div>
+    </div>
+
+    <!-- ══ LOGS ══════════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-logs">
+      <div class="page-title">Access Logs</div>
+      <div class="page-desc">All access decisions recorded by the PDP.</div>
+
+      <div class="stats-row" id="log-stats"></div>
+
+      <div class="filters">
+        <select id="log-decision-filter">
+          <option value="">All decisions</option>
+          <option value="permit">Permit</option>
+          <option value="deny">Deny</option>
+        </select>
+        <input type="number" id="log-user-filter" placeholder="User ID" style="width:100px" />
+        <select id="log-limit">
+          <option value="25">Last 25</option>
+          <option value="50" selected>Last 50</option>
+          <option value="100">Last 100</option>
+        </select>
+        <button class="btn btn-ghost" onclick="loadLogs()">Refresh</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Timestamp</th>
+              <th>User ID</th>
+              <th>Resource</th>
+              <th>Action</th>
+              <th>Decision</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody id="logs-tbody">
+            <tr><td colspan="7" class="empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── Navigation ──────────────────────────────────────────────────────────────
+const navItems = document.querySelectorAll('.nav-item');
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    navItems.forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+    const tab = item.dataset.tab;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    if (tab === 'users') loadUsers();
+    if (tab === 'resources') loadResources();
+    if (tab === 'roles') loadRoles();
+    if (tab === 'logs') loadLogs();
+  });
+});
+
+// ── Context toggle ──────────────────────────────────────────────────────────
+document.getElementById('context-toggle').addEventListener('click', function() {
+  const f = document.getElementById('context-fields');
+  const visible = f.style.display === 'grid' || f.style.display === 'block';
+  f.style.display = visible ? 'none' : 'block';
+  this.textContent = visible ? '+ Context attributes (optional)' : '− Context attributes';
+});
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+async function api(path) {
+  const r = await fetch(path);
+  return r.json();
+}
+
+function clearanceColor(c) {
+  return c === 'high' ? 'pill-green' : c === 'medium' ? 'pill-yellow' : 'pill-gray';
+}
+function sensitivityColor(s) {
+  return s === 'confidential' ? 'pill-red' : s === 'internal' ? 'pill-yellow' : 'pill-green';
+}
+function typeColor(t) {
+  const m = { docs:'pill-blue', gmail:'pill-purple', drive:'pill-yellow', calendar:'pill-green' };
+  return m[t] || 'pill-gray';
+}
+function roleColor(r) {
+  const m = {administrator:'pill-red',manager:'pill-blue',employee:'pill-green',contractor:'pill-yellow',viewer:'pill-gray'};
+  return m[r] || 'pill-gray';
+}
+
+// ── Load users ───────────────────────────────────────────────────────────────
+let allUsers = [];
+async function loadUsers() {
+  const tbody = document.getElementById('users-tbody');
+  tbody.innerHTML = '<tr><td colspan="8" class="empty"><span class="spinner"></span>Loading...</td></tr>';
+  try {
+    allUsers = await api('/admin/users');
+    renderUsers();
+    renderUserStats();
+    populateUserSelect();
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">Failed to load users.</td></tr>';
+  }
+}
+
+function renderUsers() {
+  const search = document.getElementById('user-search').value.toLowerCase();
+  const roleF  = document.getElementById('user-role-filter').value;
+  let data = allUsers;
+  if (search) data = data.filter(u => u.username.toLowerCase().includes(search) || u.email.toLowerCase().includes(search));
+  // role filter needs roles — skip for now (roles populated via detail endpoint)
+  const tbody = document.getElementById('users-tbody');
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty">No users found.</td></tr>'; return; }
+  tbody.innerHTML = data.map(u => `
+    <tr>
+      <td>${u.id}</td>
+      <td><strong>${u.username}</strong></td>
+      <td style="color:var(--muted)">${u.email}</td>
+      <td><span class="pill ${u.employment_type==='contractor'?'pill-yellow':'pill-blue'}">${u.employment_type}</span></td>
+      <td>${u.department}</td>
+      <td><span class="pill ${clearanceColor(u.clearance_level)}">${u.clearance_level}</span></td>
+      <td>${u.is_auditor ? '<span class="pill pill-purple">Yes</span>' : '<span style="color:var(--muted)">—</span>'}</td>
+      <td id="roles-${u.id}"><span style="color:var(--muted);font-size:.75rem">...</span></td>
+    </tr>
+  `).join('');
+  // async-load roles for each user
+  data.forEach(u => loadUserRoles(u.id));
+}
+
+async function loadUserRoles(uid) {
+  try {
+    const detail = await api(`/admin/users/${uid}`);
+    const cell = document.getElementById('roles-' + uid);
+    if (!cell) return;
+    cell.innerHTML = detail.roles.map(r => `<span class="pill ${roleColor(r.name)}" style="margin-right:3px">${r.name}</span>`).join('') || '<span style="color:var(--muted)">—</span>';
+  } catch(e) {}
+}
+
+function renderUserStats() {
+  const byEmp = {}, byClear = {};
+  allUsers.forEach(u => {
+    byEmp[u.employment_type] = (byEmp[u.employment_type]||0)+1;
+    byClear[u.clearance_level] = (byClear[u.clearance_level]||0)+1;
+  });
+  document.getElementById('user-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value" style="color:var(--accent)">${allUsers.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Full-time</div><div class="stat-value" style="color:var(--green)">${byEmp['full-time']||0}</div></div>
+    <div class="stat-card"><div class="stat-label">Contractors</div><div class="stat-value" style="color:var(--yellow)">${byEmp['contractor']||0}</div></div>
+    <div class="stat-card"><div class="stat-label">High Clearance</div><div class="stat-value" style="color:var(--red)">${byClear['high']||0}</div></div>
+  `;
+}
+
+document.getElementById('user-search').addEventListener('input', renderUsers);
+document.getElementById('user-role-filter').addEventListener('change', renderUsers);
+
+// ── Load resources ────────────────────────────────────────────────────────────
+let allResources = [];
+async function loadResources() {
+  const tbody = document.getElementById('resources-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" class="empty"><span class="spinner"></span>Loading...</td></tr>';
+  try {
+    allResources = await api('/admin/resources');
+    renderResources();
+    populateResourceSelect();
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">Failed to load resources.</td></tr>';
+  }
+}
+
+function renderResources() {
+  const typeF = document.getElementById('res-type-filter').value;
+  const sensF = document.getElementById('res-sens-filter').value;
+  let data = allResources;
+  if (typeF) data = data.filter(r => r.resource_type === typeF);
+  if (sensF) data = data.filter(r => r.sensitivity_level === sensF);
+  const tbody = document.getElementById('resources-tbody');
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty">No resources found.</td></tr>'; return; }
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td>${r.id}</td>
+      <td><strong>${r.name}</strong></td>
+      <td><span class="pill ${typeColor(r.resource_type)}">${r.resource_type}</span></td>
+      <td>${r.owner_id || '<span style="color:var(--muted)">—</span>'}</td>
+      <td><span class="pill ${sensitivityColor(r.sensitivity_level)}">${r.sensitivity_level}</span></td>
+      <td>${r.department || '<span style="color:var(--muted)">—</span>'}</td>
+    </tr>
+  `).join('');
+}
+
+document.getElementById('res-type-filter').addEventListener('change', renderResources);
+document.getElementById('res-sens-filter').addEventListener('change', renderResources);
+
+// ── Load roles ────────────────────────────────────────────────────────────────
+async function loadRoles() {
+  const container = document.getElementById('roles-container');
+  container.innerHTML = '<div class="empty"><span class="spinner"></span>Loading...</div>';
+  try {
+    const roles = await api('/admin/roles');
+    const ACTIONS = ['read','write','delete','share','send','admin'];
+    const TYPES   = ['docs','gmail','drive','calendar','system'];
+
+    container.innerHTML = roles.map(role => {
+      const permSet = new Set(role.permissions.map(p => p.resource_type + ':' + p.action));
+      const grid = TYPES.map(type => {
+        const cells = ACTIONS.map(action => {
+          const has = permSet.has(type+':'+action);
+          return `<td style="text-align:center">${has
+            ? '<span style="color:var(--green);font-size:1rem">&#10003;</span>'
+            : '<span style="color:var(--border);font-size:.8rem">&#10007;</span>'
+          }</td>`;
+        }).join('');
+        return `<tr><td style="color:var(--muted);font-size:.8rem;padding-left:1rem">${type}</td>${cells}</tr>`;
+      }).join('');
+
+      return `
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-title" style="display:flex;align-items:center;gap:.5rem">
+            <span class="pill ${roleColor(role.name)}">${role.name}</span>
+            <span style="font-size:.8rem;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">${role.description||''}</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Resource Type</th>
+                ${ACTIONS.map(a=>`<th style="text-align:center">${a}</th>`).join('')}
+              </tr></thead>
+              <tbody>${grid}</tbody>
+            </table>
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    container.innerHTML = '<div class="empty">Failed to load roles.</div>';
+  }
+}
+
+// ── Load logs ─────────────────────────────────────────────────────────────────
+async function loadLogs() {
+  const tbody = document.getElementById('logs-tbody');
+  tbody.innerHTML = '<tr><td colspan="7" class="empty"><span class="spinner"></span>Loading...</td></tr>';
+  const decision = document.getElementById('log-decision-filter').value;
+  const uid      = document.getElementById('log-user-filter').value;
+  const limit    = document.getElementById('log-limit').value;
+  let url = `/admin/logs?limit=${limit}`;
+  if (decision) url += `&decision=${decision}`;
+  if (uid) url += `&user_id=${uid}`;
+  try {
+    const logs = await api(url);
+    renderLogStats(logs);
+    if (!logs.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">No log entries found.</td></tr>'; return; }
+    tbody.innerHTML = logs.map(l => `
+      <tr>
+        <td style="color:var(--muted)">${l.id}</td>
+        <td style="font-size:.77rem;color:var(--muted)">${l.timestamp}</td>
+        <td>${l.user_id}</td>
+        <td>${l.resource_id ? `<span class="pill pill-blue" style="font-size:.7rem">${l.resource_type} #${l.resource_id}</span>` : `<span class="pill pill-gray" style="font-size:.7rem">${l.resource_type||'—'}</span>`}</td>
+        <td><code style="font-size:.78rem;background:var(--surface2);padding:2px 6px;border-radius:4px">${l.action}</code></td>
+        <td><span class="pill ${l.decision==='permit'?'pill-green':'pill-red'}">${l.decision}</span></td>
+        <td style="font-size:.76rem;color:var(--muted);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${l.reason||''}">${l.reason||'—'}</td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">Failed to load logs.</td></tr>';
+  }
+}
+
+function renderLogStats(logs) {
+  const permits = logs.filter(l=>l.decision==='permit').length;
+  const denies  = logs.filter(l=>l.decision==='deny').length;
+  document.getElementById('log-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Entries</div><div class="stat-value" style="color:var(--accent)">${logs.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Permitted</div><div class="stat-value" style="color:var(--green)">${permits}</div></div>
+    <div class="stat-card"><div class="stat-label">Denied</div><div class="stat-value" style="color:var(--red)">${denies}</div></div>
+    <div class="stat-card"><div class="stat-label">Deny Rate</div><div class="stat-value" style="color:var(--yellow)">${logs.length?Math.round(denies/logs.length*100):0}%</div></div>
+  `;
+}
+
+document.getElementById('log-decision-filter').addEventListener('change', loadLogs);
+document.getElementById('log-user-filter').addEventListener('input', loadLogs);
+document.getElementById('log-limit').addEventListener('change', loadLogs);
+
+// ── Populate selects ─────────────────────────────────────────────────────────
+function populateUserSelect() {
+  const sel = document.getElementById('req-user');
+  sel.innerHTML = allUsers.map(u => `<option value="${u.id}">${u.username} (${u.email})</option>`).join('');
+}
+function populateResourceSelect() {
+  const sel = document.getElementById('req-resource');
+  sel.innerHTML = allResources.map(r => `<option value="${r.id}">${r.name} [${r.resource_type}/${r.sensitivity_level}]</option>`).join('');
+}
+
+// ── Quick scenarios ──────────────────────────────────────────────────────────
+const scenarios = [
+  { label: 'Employee: own doc write',        user:3, res:1, action:'write',  ctx:{} },
+  { label: 'Employee: other doc write',      user:3, res:2, action:'write',  ctx:{} },
+  { label: 'Contractor: read assigned',      user:4, res:1, action:'read',   ctx:{} },
+  { label: 'Contractor: write (blocked)',    user:4, res:1, action:'write',  ctx:{} },
+  { label: 'Manager: share Drive',           user:2, res:4, action:'share',  ctx:{} },
+  { label: 'Employee: share Drive (blocked)',user:3, res:4, action:'share',  ctx:{} },
+  { label: 'Confidential: high clearance',   user:2, res:2, action:'read',   ctx:{} },
+  { label: 'Confidential: low clearance',    user:3, res:2, action:'read',   ctx:{} },
+  { label: 'Ext. email: send (blocked)',     user:4, res:6, action:'send',   ctx:{} },
+  { label: 'Auditor: share (SoD blocked)',   user:6, res:4, action:'share',  ctx:{} },
+  { label: 'Contractor: off-hours (blocked)',user:4, res:1, action:'read',   ctx:{hour:22} },
+  { label: 'Contractor: business hours',     user:4, res:1, action:'read',   ctx:{hour:10} },
+];
+
+document.getElementById('scenarios').innerHTML = scenarios.map((s,i) =>
+  `<button class="scenario-btn" data-idx="${i}">${s.label}</button>`
+).join('');
+
+document.getElementById('scenarios').addEventListener('click', e => {
+  if (!e.target.classList.contains('scenario-btn')) return;
+  const s = scenarios[+e.target.dataset.idx];
+  document.getElementById('req-user').value   = s.user;
+  document.getElementById('req-resource').value = s.res;
+  document.getElementById('req-action').value = s.action;
+  if (s.ctx.hour !== undefined) {
+    document.getElementById('ctx-hour').value = s.ctx.hour;
+    const f = document.getElementById('context-fields');
+    f.style.display = 'block';
+    document.getElementById('context-toggle').textContent = '− Context attributes';
+  } else {
+    document.getElementById('ctx-hour').value = '';
+  }
+  submitAccess();
+});
+
+// ── Evaluate access ──────────────────────────────────────────────────────────
+document.getElementById('btn-evaluate').addEventListener('click', submitAccess);
+document.getElementById('btn-clear').addEventListener('click', () => {
+  document.getElementById('decision-result').style.display = 'none';
+  document.getElementById('ctx-hour').value = '';
+  document.getElementById('ctx-device').value = '';
+  document.getElementById('ctx-location').value = '';
+});
+
+async function submitAccess() {
+  const userId     = document.getElementById('req-user').value;
+  const resourceId = document.getElementById('req-resource').value;
+  const action     = document.getElementById('req-action').value;
+  const hour       = document.getElementById('ctx-hour').value;
+  const device     = document.getElementById('ctx-device').value;
+  const location   = document.getElementById('ctx-location').value;
+
+  if (!userId || !resourceId) return;
+
+  const context = {};
+  if (hour !== '')   context.hour           = +hour;
+  if (device)        context.device_type    = device;
+  if (location)      context.login_location = location;
+
+  const spinner = document.getElementById('req-spinner');
+  spinner.style.display = 'inline-block';
+
+  try {
+    const resp = await fetch('/access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: +userId,
+        resource_id: +resourceId,
+        action,
+        context,
+      }),
+    });
+    const data = await resp.json();
+    showResult(data);
+  } catch(e) {
+    alert('Request failed: ' + e.message);
+  } finally {
+    spinner.style.display = 'none';
+  }
+}
+
+function showResult(data) {
+  const isPermit = data.decision === 'permit';
+  const box = document.getElementById('result-box');
+  box.className = 'result-box ' + (isPermit ? 'permit' : 'deny');
+  document.getElementById('result-verdict').textContent = isPermit ? 'ACCESS GRANTED' : 'ACCESS DENIED';
+  document.getElementById('res-user').textContent     = data.user     || '—';
+  document.getElementById('res-resource').textContent = data.resource || '—';
+  document.getElementById('res-action').textContent   = data.action   || '—';
+  document.getElementById('res-rbac').textContent     = data.rbac     || '—';
+  document.getElementById('res-abac').textContent     = data.abac     || '—';
+  document.getElementById('res-reason').textContent   = data.reason   || '—';
+  document.getElementById('decision-result').style.display = 'block';
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+(async function init() {
+  await Promise.all([loadUsers(), loadResources()]);
+})();
+</script>
+</body>
+</html>
