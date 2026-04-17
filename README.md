@@ -9,10 +9,7 @@ A Python/Flask web application implementing a hybrid **RBAC + ABAC** access cont
 - Python 3.10+
 - pip
 
-If `python` is not recognized in Command Prompt, use the full path:
-`C:\Users\Olive\AppData\Local\Programs\Python\Python313\python.exe`
-
-Or add Python to your PATH permanently (see below).
+If `python` is not recognized, see the [Adding Python to PATH](#adding-python-to-path-one-time-fix) section below.
 
 ---
 
@@ -23,7 +20,7 @@ Or add Python to your PATH permanently (see below).
 Navigate to the project folder:
 
 ```
-cd C:\Users\Olive\Downloads\cs428_lastproj
+cd path\to\cs428_lastproj
 ```
 
 ### 2. Install dependencies
@@ -60,14 +57,18 @@ Output: `report.pdf` in the project folder.
 
 ## Adding Python to PATH (one-time fix)
 
-If `python` is not recognized:
+If `python` is not recognized after installing Python:
 
 1. Search **"Edit the system environment variables"** in the Start menu
 2. Click **Environment Variables...**
 3. Under **User variables**, select **Path** → **Edit**
-4. Add: `C:\Users\Olive\AppData\Local\Programs\Python\Python313`
-5. Add: `C:\Users\Olive\AppData\Local\Programs\Python\Python313\Scripts`
+4. Click **New** and add the path to your Python install, e.g.:
+   `C:\Users\<YourName>\AppData\Local\Programs\Python\Python313`
+5. Click **New** again and add the Scripts folder, e.g.:
+   `C:\Users\<YourName>\AppData\Local\Programs\Python\Python313\Scripts`
 6. Click OK on all windows and reopen Command Prompt
+
+> **Tip:** To find your Python install location, run `where python` or `py -0p` in Command Prompt.
 
 ---
 
